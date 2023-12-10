@@ -1,0 +1,1388 @@
+openapi: 3.0.3
+
+info:
+  title: POS System API
+  description: This is documentation for all of the POS systems endpoints.
+  version: 1.0.0
+
+tags:
+  - name: Security
+    description: |-
+      Endpoints For The Security Microservic.
+  - name: Payments
+    description: |-
+      Endpoints For The Payments Microservice.
+  - name: Orders
+    description: |-
+      Endpoints For The Ordering Microservice.
+  - name: Products
+    description: |-
+      Endpoints For The Product Management Microservice.
+  - name: Reservations
+    description: |-
+      Endpoints For The Reservation Microservice.
+
+paths:
+  /api/security/token:
+    post:
+      summary: Get Bearer Token
+      description: |- 
+        Use Your Login Information To Get A Bearer Token.
+      operationId: getToken
+      requestBody: 
+        description: |-
+          Payment information that needs to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        400:
+          $ref: '#/components/responses/InvalidPayload'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Security
+
+
+  /api/payments:
+    get:
+      summary: Get List Of Payments
+      description: Get a List of Payments
+      operationId: getPayments
+      parameters:
+        - name: count
+          in: query
+          description: |-
+            Amount of objects per page (max 200)
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 200
+            default: 50
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            default: 1
+        - name: filter
+          in: query
+          description: Filter Query
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sorting Order
+          required: false
+          schema:
+            type: string
+            enum: 
+              - "asc"
+              - "desc"
+      responses:
+        200:
+          description: |-
+            Successfully Performed Action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentList'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+    
+    post:
+      summary: Execute A New Payment.
+      description: |-
+        Executes A Flow That Covers The "Pay" Action.
+      operationId: createPayment
+      requestBody: 
+        description: |-
+          Payment object that needs to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        400:
+          $ref: '#/components/responses/InvalidPayload'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+
+  /api/payments/{paymentId}:
+    get:
+      summary: Get Payment
+      description: |-
+        Get detailed information about a payment.
+      operationId: getPayment
+      parameters:
+        - name: paymentId
+          in: path
+          description: ID of the payment
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: |-
+            Successfully Performed Action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+    
+    put:
+      summary: Edit Payment Information
+      description: |-
+        Edit the details of a single payment.
+      operationId: editPayment
+      parameters:
+        - name: paymentId
+          in: path
+          description: ID of the payment
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody: 
+        description: |-
+          Payment information that needs to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+        required: true
+      responses:
+        200:
+          description: |-
+            Successfully Performed Action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        400:
+          $ref: '#/components/responses/InvalidPayload'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+
+  /api/payments/{paymentId}/refund:
+    put:
+      summary: Refund A Payment
+      description: |-
+        Refund a payment.
+      operationId: refundPayment
+      parameters:
+        - name: paymentId
+          in: path
+          description: ID of the payment
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        400:
+          $ref: '#/components/responses/InvalidPayload'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+    
+  /api/orders:
+    get:
+      summary: Get A List Of Orders
+      description: |-
+        Get a list of current orders
+      operationId: getOrders
+      parameters:
+        - name: count
+          in: query
+          description: |-
+            Amount of objects per page (max 200)
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 200
+            default: 50
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            default: 1
+        - name: filter
+          in: query
+          description: Filter Query
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sorting Order
+          required: false
+          schema:
+            type: string
+            enum: 
+              - "asc"
+              - "desc"
+      responses:
+        200:
+          description: |-
+            Successfully Performed Action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderList'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      
+    post:
+      summary: Create An Order
+      description: |-
+        Create an order with the given object information 
+        in the request body.
+      operationId: createOrder
+      requestBody:
+        description: Order object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      responses:
+        200:
+          $ref: '#/components/responses/OrderSuccess'
+        400:
+          $ref: '#/components/responses/InvalidPayload'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+    
+  /api/orders/{orderId}:
+    get:
+      summary: Get An Order By ID
+      description: |-
+        Get an order object by the given ID.
+      operationId: getOrderById
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of order to get
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/OrderSuccess'
+        400:
+          $ref: '#/components/responses/InvalidPayload'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+    
+    put:
+      summary: Edit An Order
+      description: |-
+        Edit an order with the given information in the 
+        request body. It is also responsible for completing 
+        and cancelling the order.
+      operationId: editOrder
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of order to edit
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Order object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      responses:
+        200:
+          $ref: '#/components/responses/OrderSuccess'
+        400:
+          $ref: '#/components/responses/InvalidPayload'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+  
+  /api/orders/{orderId}/cancel:
+    put:
+      summary: Cancel An Order
+      description: |-
+        Cancel an order with the provided Id.
+        This also calls the Payment API to refund the payment,
+        if it has already been made. 
+      operationId: cancelOrder
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of order to edit
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        400:
+          $ref: '#/components/responses/InvalidPayload'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+  
+  /api/orders/{orderId}/discount:
+    get:
+      summary: Get Order Discount
+      description: |-
+        Get the discount for an order.
+      operationId: discount
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of order to get discount
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/DiscountSuccess'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+  
+  /api/orders/{orderId}/receipt:
+    get:
+      summary: Get Receipt
+      description: |-
+        Get detailed information about a receipt.
+      operationId: getReceipt
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of the receipt
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: |-
+            Successfully Performed Action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+  
+  /api/products:
+    get:
+      summary: Get A List Of Products
+      description: |-
+        Get a list of current products
+      operationId: getProductList
+      parameters:
+        - name: count
+          in: query
+          description: |-
+            Amount of objects per page (max 200)
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 200
+            default: 50
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            default: 1
+        - name: filter
+          in: query
+          description: Filter Query
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sorting Order
+          required: false
+          schema:
+            type: string
+            enum: 
+              - "asc"
+              - "desc"
+      responses:
+        200:
+          description: |-
+            Successfully Performed Action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductList'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+  
+    post:
+      summary: Add A Product
+      description: |-
+        Add a product with the given object information in 
+        the request body.
+      operationId: addProduct
+      requestBody:
+        description: Product object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        200:
+          $ref: '#/components/responses/ProductSuccess'
+        400:
+          $ref: '#/components/responses/InvalidPayload'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+  
+  /api/products/{productId}:
+    get:
+      summary: Get A Product By ID
+      description: |-
+        Get a product object by the given ID.
+      operationId: getProductById
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to get
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+    
+    put:
+      summary: Edit A Product
+      description: |-
+        Edit a product with the given object information in 
+        the request body.
+      operationId: editProduct
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to edit
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Product object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+    
+    delete:
+      summary: Delete A Product
+      description: |-
+        Delete a product by the given ID.
+      operationId: deleteProduct
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+  
+  /api/products/{productId}/restock:
+    put:
+      summary: Increase Stock Levels For A Product
+      description: |-
+        Edit a product with the given object information in 
+        the request body.
+      operationId: addProductStock
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to edit
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Product object
+        content:
+          application/json:
+            schema:
+              example:
+                amount: 10
+        required: true
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+  
+  /api/reservations:
+    get:
+      summary: Get A List Of Reservations
+      description: |-
+        Get a list of current reservations
+      operationId: getReservationList
+      parameters:
+        - name: count
+          in: query
+          description: |-
+            Amount of objects per page (max 200)
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 200
+            default: 50
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            default: 1
+        - name: filter
+          in: query
+          description: Filter Query
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sorting Order
+          required: false
+          schema:
+            type: string
+            enum: 
+              - "asc"
+              - "desc"
+      responses:
+        200:
+          description: |-
+            Successfully Performed Action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationList'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Reservations
+      security:
+        - bearerAuth: []
+  
+    post:
+      summary: Add A Reservation
+      description: |-
+        Create a reservation with the given object information in 
+        the request body.
+      operationId: addReservation
+      requestBody:
+        description: Reservation object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewReservation'
+        required: true
+      responses:
+        200:
+          $ref: '#/components/responses/ReservationSuccess'
+        400:
+          $ref: '#/components/responses/InvalidPayload'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Reservations
+      security:
+        - bearerAuth: []
+  
+  /api/reservations/{reservationId}:
+    get:
+      summary: Get A Reservation By ID
+      description: |-
+        Get a reservation object by the given ID.
+      operationId: getReservationById
+      parameters:
+        - name: reservationId
+          in: path
+          description: ID of reservation to get
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Reservations
+      security:
+        - bearerAuth: []
+    
+    put:
+      summary: Edit A Reservation
+      description: |-
+        Edit a reservation with the given object information in 
+        the request body.
+      operationId: editReservation
+      parameters:
+        - name: reservationId
+          in: path
+          description: ID of reservation to edit
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Reservation object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reservation'
+        required: true
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Reservations
+      security:
+        - bearerAuth: []
+    
+    delete:
+      summary: Delete/Cancel A Reservation
+      description: |-
+        Delete a reservation by the given ID.
+      operationId: deleteReservation
+      parameters:
+        - name: reservationId
+          in: path
+          description: ID of reservation to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/InsufficientPermissionsError'
+        404:
+          $ref: '#/components/responses/ResourceNotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+      tags:
+        - Reservations
+      security:
+        - bearerAuth: []
+  
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    Success:
+      description: |-
+        Successful Operation.
+    
+    UnauthorizedError:
+      description: |-
+        Access token Is Missing Or Invalid.
+    
+    InsufficientPermissionsError:
+      description: |-
+        Not Enough Permissions To Perform This Action.
+        
+    InvalidPayload:
+      description: |-
+        Bad Request Body.
+
+    ResourceNotFound:
+      description: |-
+        The Server Cannot Find The Requested Resource.
+        
+    ServerError:
+      description: |-
+        The Server Has Encountered a Situation It 
+        Does Not Know How To Handle.
+    
+    OrderSuccess:
+      description: |-
+        Successfully Performed Action
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Order'
+    
+    ProductSuccess:
+      description: |-
+        Successfully Performed Action
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Product'
+    
+    DiscountSuccess:
+      description: |-
+        Successfully Performed Action
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Discount'
+    
+    ReservationSuccess:
+      description: |-
+        Successfully Performed Action
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Reservation'
+
+  schemas:
+    Login:
+      description: |-
+        Username and password for getting a bearer token.
+      example: 
+        username: admin
+        password: admin123
+      properties:
+        username:
+          type: string
+          example: admin
+        password: 
+          type: string
+          example: admin123
+  
+    PaymentList:
+      description: |-
+        Response object contains a list of Payments.
+      example:
+        payments:
+          - id: 11111
+            customerId: 22222
+            orderId: 33333
+            amount: 10.5
+            description: |-
+              This is a description. 
+              It is optional, but can be used to note 
+              anything of importance. 
+            createdAt: 2001-09-11
+            paymentType: bankCard
+          - id: 11111
+            customerId: 22222
+            orderId: 33333
+            amount: 10.5
+            description: |-
+              This is a description. 
+              It is optional, but can be used to note 
+              anything of importance. 
+            createdAt: 2001-09-11
+            paymentType: bankCard
+          - id: 11111
+            customerId: 22222
+            orderId: 33333
+            amount: 10.5
+            description: |-
+              This is a description. 
+              It is optional, but can be used to note 
+              anything of importance. 
+            createdAt: 2001-09-11
+            paymentType: bankCard
+      properties:
+        payment:
+          description: A list of Payments.
+          items:
+            $ref: '#/components/schemas/Payment'
+          type: array
+      type: object
+    
+    Payment:
+      description: |-
+        Response object contains information about a single Payment.
+      example:
+        id: 11111
+        customerId: 22222
+        orderId: 33333
+        amount: 10.5
+        description: |-
+          This is a description. 
+          It is optional, but can be used to note 
+          anything of importance. 
+        createdAt: 2001-09-11
+        paymentType: bankCard
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 11111
+        customerId:
+          type: integer
+          format: int64
+          example: 22222
+        orderId:
+          type: integer
+          format: int64
+          example: 33333
+        amount:
+          type: number
+          format: float
+          example: 10.5
+        description:
+          type: string
+          example: |-
+            This is a description. 
+            It is optional, but can be used to note anything of importance. 
+        createdAt:
+          type: string
+          format: date
+          example: 2001-09-11
+        paymentType:
+          type: string
+          example:
+          enum:
+            - cash
+            - coupon
+            - bankCard
+            - loyaltyProgram
+      required:
+        - id
+        - customerid
+        - orderId
+        - amount
+        - createdAt
+        - paymentType
+      type: object
+  
+    Receipt:
+      title: Receipt
+      description: A receipt object
+      example:
+        orderId: 22222
+        receiptString: |-
+          This order costs 12$ \nPaid by credit card.
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          example: 22222
+        receiptString:
+          type: string
+          example: |-
+            This order costs 12$ \nPaid by credit card.
+      required:
+        - id
+        - orderId
+        - price
+      type: object
+    
+    OrderList:
+      description: |-
+        Response object contains a list of orders.
+      example:
+        orders:
+          - id: 11111
+            customerId: 22222
+            employeeId: 33333
+            itemIdList:
+              - 123
+              - 234
+              - 345
+            tippingAmount: 2.50
+            status: paid
+          - id: 11111
+            customerId: 22222
+            employeeId: 33333
+            itemIdList:
+              - 123
+              - 234
+              - 345
+            tippingAmount: 2.50
+            status: paid
+          - id: 11111
+            customerId: 22222
+            employeeId: 33333
+            itemIdList:
+              - 123
+              - 234
+              - 345
+            tippingAmount: 2.50
+            status: paid
+      properties:
+        order:
+          description: A list of orders.
+          items:
+            $ref: '#/components/schemas/Order'
+          type: array
+      type: object
+    
+    Order:
+      description: |-
+        An object that contains information about an order.
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        customerId:
+          type: integer
+          format: int64
+          example: 1987
+        employeeId:
+          type: integer
+          format: int64
+          example: 7662
+        itemIdList:
+          type: array
+          items:
+            type: integer
+            format: int32
+            example: 
+              - 7
+              - 5
+              - 13
+        discountType:
+          type: string
+          description: Discount Type
+          example: "percentage"
+          enum: 
+            - "flat"
+            - "percentage"
+        discountAmount:
+          type: number
+          example: 10.5
+        tippingAmount:
+          type: number
+          example: 5.23
+        status:
+          type: string
+          description: Order status
+          example: "created"
+          enum:
+            - "created"
+            - "paid"
+            - "completed"
+            - "cancelled"
+            - "refunded"
+    
+    Discount:
+      description: |-
+        An object that contains information about the applied 
+        discounts for an order.
+      type: object
+      properties:
+        order_id: 
+          type: integer
+          format: int64
+          example: 12345
+        discountType:
+          type: string
+          description: Discount Type
+          example: "percentage"
+          enum: 
+            - "flat"
+            - "percentage"
+        discountAmount:
+          type: number
+          example: 10.5
+    
+    ProductList:
+      description: |-
+        An object that contains a list of products.
+      example:
+        products:
+          - id: 11111
+            name: Banana
+            description: This is a Banana
+            price: 12.50
+            stock: 10
+          - id: 11112
+            name: Apple
+            description: This is an Apple
+            price: 12.50
+            stock: 10
+          - id: 11112
+            name: Pear
+            description: This is a Pear
+            price: 12.50
+            stock: 10
+      properties:
+        product:
+          description: A list of products.
+          items:
+            $ref: '#/components/schemas/Product'
+          type: array
+      type: object
+    
+    Product:
+      description: |-
+        An object that contains information about a 
+        specific product type. 
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: greek salad
+        description:
+          type: string
+          example: a salad from Greece
+        price:
+          type: number
+          example: 4.59
+        stock:
+          type: integer
+          format: int64
+          example: 12
+    
+    ReservationList:
+      description: |-
+        An object that contains a list of reservations.
+      example:
+        reservations:
+          - reservationId: 11111
+            orderId: 22222
+            startTime: 2023-08-25
+            endTime: 2023-08-25
+            creationTime: 2023-08-25
+            lastUpdateTime: 2023-08-25
+          - reservationId: 11111
+            orderId: 22222
+            startTime: 2023-08-25
+            endTime: 2023-08-25
+            creationTime: 2023-08-25
+            lastUpdateTime: 2023-08-25
+          - reservationId: 11111
+            orderId: 22222
+            startTime: 2023-08-25
+            endTime: 2023-08-25
+            creationTime: 2023-08-25
+            lastUpdateTime: 2023-08-25
+      properties:
+        product:
+          description: A list of Reservations.
+          items:
+            $ref: '#/components/schemas/Reservation'
+      type: object
+    
+    NewReservation:
+      description: |-
+        An object that contains information about a 
+        reservation for a product or service. 
+      type: object
+      properties:
+        description:
+          type: string
+          example: Wants Polish Removed (from nails)
+        reservationId:
+          type: integer
+          format: int64
+          example: 12345
+        orderId:
+          type: integer
+          format: int64
+          example: 12345
+        startTime:
+          type: string
+          format: date
+          example: 2023-08-25
+        endTime:
+          type: string
+          format: date
+          example: 2023-08-25
+    
+    Reservation:
+      description: |-
+        An object that contains information about a 
+        reservation for a product or service. 
+      type: object
+      properties:
+        reservationId:
+          type: integer
+          format: int64
+          example: 12345
+        orderId:
+          type: integer
+          format: int64
+          example: 12345
+        startTime:
+          type: string
+          format: date
+          example: 2023-08-25
+        endTime:
+          type: string
+          format: date
+          example: 2023-08-25
+        creationTime:
+          type: string
+          format: date
+          example: 2023-08-25
+        lastUpdateTime:
+          type: string
+          format: date
+          example: 2023-08-25
