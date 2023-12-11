@@ -14,7 +14,7 @@ public class User {
     @GeneratedValue
     private UUID id;
 
-    private String name;
+    private String username;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
