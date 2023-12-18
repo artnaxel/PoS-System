@@ -1,15 +1,14 @@
-package com.demo.PoS.model.entity;
-import jakarta.persistence.*;
+package com.demo.PoS.dto;
+
+import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@MappedSuperclass
+@Getter
 @Setter
-public class Item {
-    @Id
-    @GeneratedValue
+public class ProductDetails {
     private UUID id;
 
     private String name;
@@ -17,4 +16,6 @@ public class Item {
     private String description;
 
     private BigDecimal price;
+
+    private Integer stock;
 }
