@@ -1,18 +1,21 @@
 package com.demo.PoS.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 import java.util.Set;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 public class EmployeeDetails {
 
-    private UUID id;
+    @NotBlank
     private String name;
-    private String surname;
-    private Set<UUID> serviceIds;
 
+    @NotBlank
+    private String surname;
+
+    @NotNull
+    private Set<@NotNull UUID> serviceIds;
 }

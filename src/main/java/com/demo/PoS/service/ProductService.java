@@ -5,6 +5,7 @@ import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.model.entity.Product;
 import com.demo.PoS.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
     }
 
+    @Transactional
     public Product updateProduct(UUID productId, ProductDetails productDetails) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
@@ -45,9 +47,13 @@ public class ProductService {
 
 
     public void deleteById(UUID productId) {
+        if (!productRepository.existsById(productId)) {
+            throw new NotFoundException("Product not found with id: " + productId);
+        }
         productRepository.deleteById(productId);
     }
 
+    @Transactional
     public Product restockProduct(UUID productId, Integer newStock) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));

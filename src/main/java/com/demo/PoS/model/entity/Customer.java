@@ -1,11 +1,14 @@
 package com.demo.PoS.model.entity;
 
 import jakarta.persistence.Entity;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
-@Setter
+@Data
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 public class Customer extends User {
 
-    //TODO: reservations
 }

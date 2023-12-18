@@ -3,11 +3,12 @@ package com.demo.PoS.controller;
 import com.demo.PoS.dto.EmployeeDetails;
 import com.demo.PoS.model.entity.Employee;
 import com.demo.PoS.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,8 +29,8 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
-        Employee createdEmployee = employeeService.createEmployee(employee);
+    public ResponseEntity<Employee> createEmployee(@Valid @RequestBody EmployeeDetails employeeDetails) {
+        Employee createdEmployee = employeeService.createEmployee(employeeDetails);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
 
@@ -40,7 +41,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeId}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable UUID employeeId, @RequestBody EmployeeDetails employeeDetails) {
+    public ResponseEntity<Employee> updateEmployee(@PathVariable UUID employeeId, @Valid @RequestBody EmployeeDetails employeeDetails) {
         Employee updatedEmployee = employeeService.updateEmployee(employeeId, employeeDetails);
         return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
     }

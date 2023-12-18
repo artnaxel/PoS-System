@@ -1,12 +1,18 @@
 package com.demo.PoS.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
 @MappedSuperclass
-@Setter
+@SuperBuilder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue

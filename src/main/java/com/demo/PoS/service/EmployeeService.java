@@ -7,10 +7,9 @@ import com.demo.PoS.model.entity.ProvidedService;
 import com.demo.PoS.repository.EmployeeRepository;
 import com.demo.PoS.repository.ProvidedServiceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +28,21 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee createEmployee(Employee employee) {
+    @Transactional
+    public Employee createEmployee(EmployeeDetails employeeDetails) {
+        Set<ProvidedService> services = Optional.ofNullable(employeeDetails.getServiceIds())
+                .orElse(Collections.emptySet())
+                .stream()
+                .map(id -> providedServiceRepository.findById(id)
+                        .orElseThrow(() -> new NotFoundException("Service not found with id: " + id)))
+                .collect(Collectors.toSet());
+
+        Employee employee = Employee.builder()
+                .name(employeeDetails.getName())
+                .surname(employeeDetails.getSurname())
+                .providedServices(services)
+                .build();
+
         return employeeRepository.save(employee);
     }
 
@@ -38,6 +51,7 @@ public class EmployeeService {
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
     }
 
+    @Transactional
     public Employee updateEmployee(UUID employeeId, EmployeeDetails employeeDetails) {
         Employee existingEmployee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
