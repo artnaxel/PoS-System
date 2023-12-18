@@ -2,7 +2,7 @@ package com.demo.PoS.service;
 
 import com.demo.PoS.dto.EmployeeDetails;
 import com.demo.PoS.model.entity.Employee;
-import com.demo.PoS.exceptions.UserNotFoundException;
+import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.model.entity.ProvidedService;
 import com.demo.PoS.repository.EmployeeRepository;
 import com.demo.PoS.repository.ProvidedServiceRepository;
@@ -35,12 +35,12 @@ public class EmployeeService {
 
     public Employee findEmployeeById(UUID employeeId) {
         return employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new UserNotFoundException("Employee not found with id: " + employeeId));
+                .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
     }
 
     public Employee updateEmployee(UUID employeeId, EmployeeDetails employeeDetails) {
         Employee existingEmployee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new UserNotFoundException("Employee not found with id: " + employeeId));
+                .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
 
         existingEmployee.setName(employeeDetails.getName());
         existingEmployee.setSurname(employeeDetails.getSurname());
@@ -48,7 +48,7 @@ public class EmployeeService {
         if (employeeDetails.getServiceIds() != null) {
             Set<ProvidedService> services = employeeDetails.getServiceIds().stream()
                     .map(serviceId -> providedServiceRepository.findById(serviceId)
-                            .orElseThrow(() -> new RuntimeException("Service not found with id: " + serviceId)))
+                            .orElseThrow(() -> new NotFoundException("Service not found with id: " + serviceId)))
                     .collect(Collectors.toSet());
             existingEmployee.setProvidedServices(services);
         }
@@ -56,10 +56,9 @@ public class EmployeeService {
         return employeeRepository.save(existingEmployee);
     }
 
-    // Delete an employee
     public void deleteEmployee(UUID employeeId) {
         if (!employeeRepository.existsById(employeeId)) {
-            throw new UserNotFoundException("Employee not found with id: " + employeeId);
+            throw new NotFoundException("Employee not found with id: " + employeeId);
         }
         employeeRepository.deleteById(employeeId);
     }

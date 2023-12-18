@@ -14,11 +14,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
-public class ItemController {
+public class ProductController {
 
     private final ProductService productService;
 
-    public ItemController(ProductService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
