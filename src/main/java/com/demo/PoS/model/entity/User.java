@@ -2,6 +2,7 @@ package com.demo.PoS.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -21,4 +22,8 @@ public class User {
     private String name;
 
     private String surname;
+
+    @Embedded
+    @Builder.Default
+    private PosTimestamps timestamps = new PosTimestamps();
 }
