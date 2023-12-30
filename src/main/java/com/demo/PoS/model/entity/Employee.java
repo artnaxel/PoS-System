@@ -1,11 +1,9 @@
 package com.demo.PoS.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.cglib.util.ParallelSorter;
 
 import java.util.Set;
 
@@ -23,5 +21,8 @@ public class Employee extends User {
             inverseJoinColumns = @JoinColumn(name = "providedService_id")
     )
     private Set<ProvidedService> providedServices;
+
+    @Builder.Default
+    private PosTimestamps timestamps = new PosTimestamps();
 
 }

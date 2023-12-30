@@ -22,8 +22,4 @@ public class User {
     private String name;
 
     private String surname;
-
-    @Embedded
-    @Builder.Default
-    private PosTimestamps timestamps = new PosTimestamps();
 }

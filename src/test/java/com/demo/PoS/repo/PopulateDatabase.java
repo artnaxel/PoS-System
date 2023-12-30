@@ -5,10 +5,7 @@ import com.demo.PoS.model.entity.Employee;
 import com.demo.PoS.model.entity.Order;
 import com.demo.PoS.model.entity.Product;
 import com.demo.PoS.model.enums.OrderStatus;
-import com.demo.PoS.repository.CustomerRepository;
-import com.demo.PoS.repository.EmployeeRepository;
-import com.demo.PoS.repository.OrderRepository;
-import com.demo.PoS.repository.ProductRepository;
+import com.demo.PoS.repository.*;
 import com.demo.PoS.repository.relations.OrderProductRepository;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
@@ -33,6 +30,8 @@ public class PopulateDatabase {
     private EmployeeRepository employeeRepository;
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private ReceiptRepository receiptRepository;
 
     private final Faker faker = new Faker();
 
@@ -44,6 +43,7 @@ public class PopulateDatabase {
     @Test
     @org.junit.jupiter.api.Order(0)
     void cleanDb() {
+        receiptRepository.deleteAll();
         orderProductRepository.deleteAll();
         orderRepository.deleteAll();
         productRepository.deleteAll();

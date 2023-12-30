@@ -4,13 +4,11 @@ import com.demo.PoS.dto.OrderProductDto;
 import com.demo.PoS.model.entity.Order;
 import com.demo.PoS.model.entity.Product;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.Mutability;
 
 import java.util.UUID;
-
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "pos_order_item")
 public class OrderProduct {
@@ -41,8 +39,9 @@ public class OrderProduct {
     }
 
     @Embeddable
-    @Getter
-    @Setter
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class OrderProductKey {
         @Column(name = "order_id")
         private UUID orderId;
