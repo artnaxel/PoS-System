@@ -10,7 +10,7 @@ import java.util.UUID;
 public class ServiceSlotDetails {
 
     @NotNull
-    private UUID serviceId;
+    private UUID providedServiceId;
 
     @NotNull
     private UUID employeeId;

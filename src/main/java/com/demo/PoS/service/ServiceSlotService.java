@@ -30,8 +30,8 @@ public class ServiceSlotService {
     public ServiceSlotDto createServiceSlot(ServiceSlotDetails request) {
         Employee employee = employeeRepository.findById(request.getEmployeeId())
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + request.getEmployeeId()));
-        ProvidedService providedService = providedServiceRepository.findById(request.getServiceId())
-                .orElseThrow(() -> new NotFoundException("Service not found with id: " + request.getServiceId()));
+        ProvidedService providedService = providedServiceRepository.findById(request.getProvidedServiceId())
+                .orElseThrow(() -> new NotFoundException("Service not found with id: " + request.getProvidedServiceId()));
 
         ServiceSlot serviceSlot = ServiceSlot.builder()
                 .employee(employee)
