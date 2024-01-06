@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 public class ProvidedServiceDetails {
@@ -19,5 +20,7 @@ public class ProvidedServiceDetails {
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal price;
+
+    private UUID discountId;
 
 }

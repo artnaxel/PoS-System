@@ -1,6 +1,7 @@
 package com.demo.PoS.model.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,4 +21,7 @@ public class ProvidedService extends Item {
 
     @OneToMany(mappedBy = "providedService")
     private Set<ServiceSlot> serviceSlots;
+
+    @ManyToOne
+    private Discount discount;
 }

@@ -3,8 +3,9 @@ package com.demo.PoS.service;
 import com.demo.PoS.dto.ProvidedServiceDetails;
 import com.demo.PoS.dto.ProvidedServiceDto;
 import com.demo.PoS.exceptions.NotFoundException;
+import com.demo.PoS.model.entity.Discount;
 import com.demo.PoS.model.entity.ProvidedService;
-import com.demo.PoS.repository.EmployeeRepository;
+import com.demo.PoS.repository.DiscountRepository;
 import com.demo.PoS.repository.ProvidedServiceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +17,12 @@ public class ProvidedServiceService {
 
     private final ProvidedServiceRepository providedServiceRepository;
 
-    private final EmployeeRepository employeeRepository;
+    private final DiscountRepository discountRepository;
 
-    public ProvidedServiceService(ProvidedServiceRepository providedServiceRepository, EmployeeRepository employeeRepository) {
+    public ProvidedServiceService(ProvidedServiceRepository providedServiceRepository,
+                                  DiscountRepository discountRepository) {
         this.providedServiceRepository = providedServiceRepository;
-        this.employeeRepository = employeeRepository;
+        this.discountRepository = discountRepository;
     }
 
     public List<ProvidedServiceDto> getAllProvidedServices() {
@@ -32,6 +34,7 @@ public class ProvidedServiceService {
                         .name(providedService.getName())
                         .description(providedService.getDescription())
                         .price(providedService.getPrice())
+                        .discountId(Optional.ofNullable(providedService.getDiscount()).map(Discount::getId).orElse(null))
                         .build()
         ).collect(Collectors.toList());
     }
@@ -51,6 +54,7 @@ public class ProvidedServiceService {
                 .name(providedService.getName())
                 .description(providedService.getDescription())
                 .price(providedService.getPrice())
+                .discountId(Optional.ofNullable(providedService.getDiscount()).map(Discount::getId).orElse(null))
                 .build();
     }
 
@@ -63,6 +67,7 @@ public class ProvidedServiceService {
                 .name(providedService.getName())
                 .description(providedService.getDescription())
                 .price(providedService.getPrice())
+                .discountId(Optional.ofNullable(providedService.getDiscount()).map(Discount::getId).orElse(null))
                 .build();
     }
 
@@ -75,6 +80,13 @@ public class ProvidedServiceService {
         providedService.setDescription(providedServiceDetails.getDescription());
         providedService.setPrice(providedServiceDetails.getPrice());
 
+        Optional.ofNullable(providedServiceDetails.getDiscountId())
+                .ifPresentOrElse(discountId -> {
+                    Discount discount = discountRepository.findById(discountId)
+                            .orElseThrow(() -> new NotFoundException("Discount not found with id: " + discountId));
+                    providedService.setDiscount(discount);
+                }, () -> providedService.setDiscount(null));
+
         providedServiceRepository.save(providedService);
 
         return ProvidedServiceDto.builder()
@@ -82,6 +94,7 @@ public class ProvidedServiceService {
                 .name(providedService.getName())
                 .description(providedService.getDescription())
                 .price(providedService.getPrice())
+                .discountId(Optional.ofNullable(providedService.getDiscount()).map(Discount::getId).orElse(null))
                 .build();
     }
 

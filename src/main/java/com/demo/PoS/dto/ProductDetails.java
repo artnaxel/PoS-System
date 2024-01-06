@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 public class ProductDetails {
@@ -21,5 +22,7 @@ public class ProductDetails {
     @NotNull
     @Min(value = 0)
     private Integer stock;
+
+    private UUID discountId;
 
 }

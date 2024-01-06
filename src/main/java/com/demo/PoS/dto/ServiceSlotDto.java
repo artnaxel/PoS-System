@@ -12,14 +12,9 @@ import java.util.UUID;
 public class ServiceSlotDto {
 
     private UUID id;
-
     private UUID employeeId;
-
     private UUID providedServiceId;
-
     private LocalDateTime startTime;
-
     private LocalDateTime endTime;
-
     private ServiceSlotStatus serviceSlotStatus;
 }

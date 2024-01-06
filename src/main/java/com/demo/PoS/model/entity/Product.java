@@ -1,6 +1,7 @@
 package com.demo.PoS.model.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,6 +17,9 @@ import lombok.experimental.SuperBuilder;
 public class Product extends Item {
 
     private Integer stock;
+
+    @ManyToOne
+    private Discount discount;
 
 }
 

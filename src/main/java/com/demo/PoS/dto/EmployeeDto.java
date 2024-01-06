@@ -10,13 +10,7 @@ import java.util.UUID;
 @Builder
 public class EmployeeDto {
 
-    @NotBlank
     private UUID id;
-
-    @NotBlank
     private String name;
-
-    @NotBlank
     private String surname;
-
 }
