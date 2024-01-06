@@ -8,7 +8,7 @@ import java.util.UUID;
 @Data
 public class ServiceSlotDetails {
 
-    private UUID serviceId;
+    private UUID providedServiceId;
 
     private UUID employeeId;
 
