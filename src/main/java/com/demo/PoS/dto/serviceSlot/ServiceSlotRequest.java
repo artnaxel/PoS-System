@@ -1,4 +1,4 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.serviceSlot;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-public class ServiceSlotDetails {
+public class ServiceSlotRequest {
 
     @NotNull
     private UUID providedServiceId;

@@ -1,4 +1,4 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.providedService;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class ProvidedServiceDto {
+public class ProvidedServiceResponse {
 
     private UUID id;
     private String name;

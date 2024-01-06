@@ -1,10 +1,10 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.employee;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class EmployeeDetails {
+public class EmployeeRequest {
 
     @NotBlank
     private String name;

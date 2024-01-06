@@ -1,7 +1,7 @@
 package com.demo.PoS.controller;
 
-import com.demo.PoS.dto.ServiceSlotDetails;
-import com.demo.PoS.dto.ServiceSlotDto;
+import com.demo.PoS.dto.serviceSlot.ServiceSlotRequest;
+import com.demo.PoS.dto.serviceSlot.ServiceSlotResponse;
 import com.demo.PoS.service.ServiceSlotService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,8 @@ public class ServiceSlotController {
     }
 
     @PostMapping
-    public ResponseEntity<ServiceSlotDto> createServiceSlot(@RequestBody ServiceSlotDetails request) {
-        ServiceSlotDto serviceSlot = serviceSlotService.createServiceSlot(request);
+    public ResponseEntity<ServiceSlotResponse> createServiceSlot(@RequestBody ServiceSlotRequest request) {
+        ServiceSlotResponse serviceSlot = serviceSlotService.createServiceSlot(request);
         return new ResponseEntity<>(serviceSlot, HttpStatus.CREATED);
     }
 }

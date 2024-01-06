@@ -1,8 +1,7 @@
 package com.demo.PoS.controller;
 
-import com.demo.PoS.dto.EmployeeDetails;
-import com.demo.PoS.dto.EmployeeDto;
-import com.demo.PoS.model.entity.Employee;
+import com.demo.PoS.dto.employee.EmployeeRequest;
+import com.demo.PoS.dto.employee.EmployeeResponse;
 import com.demo.PoS.service.EmployeeService;
 
 import org.springframework.http.HttpStatus;
@@ -24,26 +23,26 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
-        List<EmployeeDto> employees = employeeService.findAllEmployees();
+    public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
+        List<EmployeeResponse> employees = employeeService.findAllEmployees();
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeDto> createEmployee(@Valid @RequestBody EmployeeDetails employeeDetails) {
-        EmployeeDto createdEmployee = employeeService.createEmployee(employeeDetails);
+    public ResponseEntity<EmployeeResponse> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
+        EmployeeResponse createdEmployee = employeeService.createEmployee(employeeRequest);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
 
     @GetMapping("/{employeeId}")
-    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable UUID employeeId) {
-        EmployeeDto employee = employeeService.findEmployeeById(employeeId);
+    public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable UUID employeeId) {
+        EmployeeResponse employee = employeeService.findEmployeeById(employeeId);
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
     @PutMapping("/{employeeId}")
-    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable UUID employeeId, @Valid @RequestBody EmployeeDetails employeeDetails) {
-        EmployeeDto updatedEmployee = employeeService.updateEmployee(employeeId, employeeDetails);
+    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable UUID employeeId, @Valid @RequestBody EmployeeRequest employeeRequest) {
+        EmployeeResponse updatedEmployee = employeeService.updateEmployee(employeeId, employeeRequest);
         return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
     }
 

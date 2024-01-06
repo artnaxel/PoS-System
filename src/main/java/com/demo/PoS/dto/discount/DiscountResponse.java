@@ -1,4 +1,4 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.discount;
 
 import com.demo.PoS.model.enums.DiscountStatus;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class DiscountDto {
+public class DiscountResponse {
 
     private UUID id;
     private String name;

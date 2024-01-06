@@ -1,6 +1,5 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.employee;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,7 +7,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class EmployeeDto {
+public class EmployeeResponse {
 
     private UUID id;
     private String name;

@@ -1,7 +1,7 @@
 package com.demo.PoS.service;
 
-import com.demo.PoS.dto.ServiceSlotDetails;
-import com.demo.PoS.dto.ServiceSlotDto;
+import com.demo.PoS.dto.serviceSlot.ServiceSlotRequest;
+import com.demo.PoS.dto.serviceSlot.ServiceSlotResponse;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.model.entity.Employee;
 import com.demo.PoS.model.entity.ProvidedService;
@@ -27,7 +27,7 @@ public class ServiceSlotService {
         this.providedServiceRepository = providedServiceRepository;
     }
 
-    public ServiceSlotDto createServiceSlot(ServiceSlotDetails request) {
+    public ServiceSlotResponse createServiceSlot(ServiceSlotRequest request) {
         Employee employee = employeeRepository.findById(request.getEmployeeId())
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + request.getEmployeeId()));
         ProvidedService providedService = providedServiceRepository.findById(request.getProvidedServiceId())
@@ -43,7 +43,7 @@ public class ServiceSlotService {
 
         serviceSlotRepository.save(serviceSlot);
 
-        return ServiceSlotDto.builder()
+        return ServiceSlotResponse.builder()
                 .id(serviceSlot.getId())
                 .employeeId(serviceSlot.getEmployee().getId())
                 .providedServiceId(serviceSlot.getProvidedService().getId())

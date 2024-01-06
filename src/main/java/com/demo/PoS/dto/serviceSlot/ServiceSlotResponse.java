@@ -1,4 +1,4 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.serviceSlot;
 
 import com.demo.PoS.model.enums.ServiceSlotStatus;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class ServiceSlotDto {
+public class ServiceSlotResponse {
 
     private UUID id;
     private UUID employeeId;

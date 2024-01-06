@@ -1,7 +1,7 @@
 package com.demo.PoS.service;
 
-import com.demo.PoS.dto.ProductDetails;
-import com.demo.PoS.dto.ProductDto;
+import com.demo.PoS.dto.product.ProductRequest;
+import com.demo.PoS.dto.product.ProductResponse;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.model.entity.Discount;
 import com.demo.PoS.model.entity.Product;
@@ -26,10 +26,10 @@ public class ProductService {
         this.discountRepository = discountRepository;
     }
 
-    public List<ProductDto> findAll() {
+    public List<ProductResponse> findAll() {
         List<Product> products = productRepository.findAll();
         return products.stream().map(product ->
-                ProductDto.builder()
+                ProductResponse.builder()
                         .id(product.getId())
                         .name(product.getName())
                         .description(product.getDescription())
@@ -41,17 +41,17 @@ public class ProductService {
     }
 
 
-    public ProductDto saveProduct(ProductDetails productDetails) {
+    public ProductResponse saveProduct(ProductRequest productRequest) {
         Product product = Product.builder()
-                .name(productDetails.getName())
-                .description(productDetails.getDescription())
-                .price(productDetails.getPrice())
-                .stock(productDetails.getStock())
+                .name(productRequest.getName())
+                .description(productRequest.getDescription())
+                .price(productRequest.getPrice())
+                .stock(productRequest.getStock())
                 .build();
 
         productRepository.save(product);
 
-        return ProductDto.builder()
+        return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
@@ -61,10 +61,10 @@ public class ProductService {
                 .build();
     }
 
-    public ProductDto findById(UUID productId) {
+    public ProductResponse findById(UUID productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
-        return ProductDto.builder()
+        return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
@@ -75,16 +75,16 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDto updateProduct(UUID productId, ProductDetails productDetails) {
+    public ProductResponse updateProduct(UUID productId, ProductRequest productRequest) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
 
-        product.setName(productDetails.getName());
-        product.setDescription(productDetails.getDescription());
-        product.setPrice(productDetails.getPrice());
-        product.setStock(productDetails.getStock());
+        product.setName(productRequest.getName());
+        product.setDescription(productRequest.getDescription());
+        product.setPrice(productRequest.getPrice());
+        product.setStock(productRequest.getStock());
 
-        Optional.ofNullable(productDetails.getDiscountId())
+        Optional.ofNullable(productRequest.getDiscountId())
                 .ifPresentOrElse(discountId -> {
                     Discount discount = discountRepository.findById(discountId)
                             .orElseThrow(() -> new NotFoundException("Discount not found with id: " + discountId));
@@ -93,7 +93,7 @@ public class ProductService {
 
         productRepository.save(product);
 
-        return ProductDto.builder()
+        return ProductResponse.builder()
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
@@ -111,12 +111,12 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDto restockProduct(UUID productId, Integer newStock) {
+    public ProductResponse restockProduct(UUID productId, Integer newStock) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
 
         product.setStock(newStock);
-        return ProductDto.builder()
+        return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())

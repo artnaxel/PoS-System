@@ -1,7 +1,7 @@
 package com.demo.PoS.service;
 
-import com.demo.PoS.dto.ProvidedServiceDetails;
-import com.demo.PoS.dto.ProvidedServiceDto;
+import com.demo.PoS.dto.providedService.ProvidedServiceRequest;
+import com.demo.PoS.dto.providedService.ProvidedServiceResponse;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.model.entity.Discount;
 import com.demo.PoS.model.entity.ProvidedService;
@@ -25,11 +25,11 @@ public class ProvidedServiceService {
         this.discountRepository = discountRepository;
     }
 
-    public List<ProvidedServiceDto> getAllProvidedServices() {
+    public List<ProvidedServiceResponse> getAllProvidedServices() {
         List<ProvidedService> providedServices = providedServiceRepository.findAll();
 
         return providedServices.stream().map(providedService ->
-                ProvidedServiceDto.builder()
+                ProvidedServiceResponse.builder()
                         .id(providedService.getId())
                         .name(providedService.getName())
                         .description(providedService.getDescription())
@@ -40,16 +40,16 @@ public class ProvidedServiceService {
     }
 
     @Transactional
-    public ProvidedServiceDto createProvidedService(ProvidedServiceDetails providedServiceDetails) {
+    public ProvidedServiceResponse createProvidedService(ProvidedServiceRequest providedServiceRequest) {
         ProvidedService providedService = ProvidedService.builder()
-                .name(providedServiceDetails.getName())
-                .description(providedServiceDetails.getDescription())
-                .price(providedServiceDetails.getPrice())
+                .name(providedServiceRequest.getName())
+                .description(providedServiceRequest.getDescription())
+                .price(providedServiceRequest.getPrice())
                 .build();
 
         providedServiceRepository.save(providedService);
 
-        return ProvidedServiceDto.builder()
+        return ProvidedServiceResponse.builder()
                 .id(providedService.getId())
                 .name(providedService.getName())
                 .description(providedService.getDescription())
@@ -58,11 +58,11 @@ public class ProvidedServiceService {
                 .build();
     }
 
-    public ProvidedServiceDto findById(UUID providedServiceId) {
+    public ProvidedServiceResponse findById(UUID providedServiceId) {
         ProvidedService providedService = providedServiceRepository.findById(providedServiceId)
                 .orElseThrow(() -> new NotFoundException("Service not found with id: " + providedServiceId));
 
-        return ProvidedServiceDto.builder()
+        return ProvidedServiceResponse.builder()
                 .id(providedService.getId())
                 .name(providedService.getName())
                 .description(providedService.getDescription())
@@ -72,15 +72,15 @@ public class ProvidedServiceService {
     }
 
     @Transactional
-    public ProvidedServiceDto updateProvidedService(UUID providedServiceId, ProvidedServiceDetails providedServiceDetails) {
+    public ProvidedServiceResponse updateProvidedService(UUID providedServiceId, ProvidedServiceRequest providedServiceRequest) {
         ProvidedService providedService = providedServiceRepository.findById(providedServiceId)
                 .orElseThrow(() -> new NotFoundException("Service not found with id: " + providedServiceId));
 
-        providedService.setName(providedServiceDetails.getName());
-        providedService.setDescription(providedServiceDetails.getDescription());
-        providedService.setPrice(providedServiceDetails.getPrice());
+        providedService.setName(providedServiceRequest.getName());
+        providedService.setDescription(providedServiceRequest.getDescription());
+        providedService.setPrice(providedServiceRequest.getPrice());
 
-        Optional.ofNullable(providedServiceDetails.getDiscountId())
+        Optional.ofNullable(providedServiceRequest.getDiscountId())
                 .ifPresentOrElse(discountId -> {
                     Discount discount = discountRepository.findById(discountId)
                             .orElseThrow(() -> new NotFoundException("Discount not found with id: " + discountId));
@@ -89,7 +89,7 @@ public class ProvidedServiceService {
 
         providedServiceRepository.save(providedService);
 
-        return ProvidedServiceDto.builder()
+        return ProvidedServiceResponse.builder()
                 .id(providedService.getId())
                 .name(providedService.getName())
                 .description(providedService.getDescription())

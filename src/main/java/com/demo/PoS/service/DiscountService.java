@@ -1,7 +1,7 @@
 package com.demo.PoS.service;
 
-import com.demo.PoS.dto.DiscountDetails;
-import com.demo.PoS.dto.DiscountDto;
+import com.demo.PoS.dto.discount.DiscountRequest;
+import com.demo.PoS.dto.discount.DiscountResponse;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.model.entity.Discount;
 import com.demo.PoS.repository.DiscountRepository;
@@ -20,13 +20,13 @@ public class DiscountService {
         this.discountRepository = discountRepository;
     }
 
-    public DiscountDto createDiscount(DiscountDetails discountDetails) {
+    public DiscountResponse createDiscount(DiscountRequest discountRequest) {
         Discount discount = Discount.builder()
-                .name(discountDetails.getName())
-                .discountRate(discountDetails.getDiscountRate())
-                .validFrom(discountDetails.getValidFrom())
-                .validUntil(discountDetails.getValidUntil())
-                .discountStatus(discountDetails.getDiscountStatus())
+                .name(discountRequest.getName())
+                .discountRate(discountRequest.getDiscountRate())
+                .validFrom(discountRequest.getValidFrom())
+                .validUntil(discountRequest.getValidUntil())
+                .discountStatus(discountRequest.getDiscountStatus())
                 .build();
 
         discountRepository.save(discount);
@@ -34,35 +34,35 @@ public class DiscountService {
         return convertToDto(discount);
     }
 
-    public DiscountDto getDiscount(UUID id) {
+    public DiscountResponse getDiscount(UUID id) {
        Discount discount =  discountRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Discount not found"));
 
        return convertToDto(discount);
     }
 
-    public List<DiscountDto> getAllDiscounts() {
+    public List<DiscountResponse> getAllDiscounts() {
         List<Discount> discounts = discountRepository.findAll();
         return discounts.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
-    public DiscountDto updateDiscount(UUID id, DiscountDetails discountDetails) {
+    public DiscountResponse updateDiscount(UUID id, DiscountRequest discountRequest) {
         Discount discount = discountRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Discount not found"));
 
-        discount.setName(discountDetails.getName());
-        discount.setDiscountRate(discountDetails.getDiscountRate());
-        discount.setValidFrom(discountDetails.getValidFrom());
-        discount.setValidUntil(discountDetails.getValidUntil());
-        discount.setDiscountStatus(discountDetails.getDiscountStatus());
+        discount.setName(discountRequest.getName());
+        discount.setDiscountRate(discountRequest.getDiscountRate());
+        discount.setValidFrom(discountRequest.getValidFrom());
+        discount.setValidUntil(discountRequest.getValidUntil());
+        discount.setDiscountStatus(discountRequest.getDiscountStatus());
 
         discountRepository.save(discount);
 
         return convertToDto(discount);
     }
 
-    private DiscountDto convertToDto(Discount discount) {
-        return DiscountDto.builder()
+    private DiscountResponse convertToDto(Discount discount) {
+        return DiscountResponse.builder()
                 .id(discount.getId())
                 .name(discount.getName())
                 .discountRate(discount.getDiscountRate())

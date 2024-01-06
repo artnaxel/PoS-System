@@ -1,7 +1,7 @@
 package com.demo.PoS.controller;
 
-import com.demo.PoS.dto.DiscountDetails;
-import com.demo.PoS.dto.DiscountDto;
+import com.demo.PoS.dto.discount.DiscountRequest;
+import com.demo.PoS.dto.discount.DiscountResponse;
 import com.demo.PoS.service.DiscountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,26 +21,26 @@ public class DiscountController {
     }
 
     @PostMapping
-    public ResponseEntity<DiscountDto> createDiscount(@RequestBody DiscountDetails discount) {
-        DiscountDto created = discountService.createDiscount(discount);
+    public ResponseEntity<DiscountResponse> createDiscount(@RequestBody DiscountRequest discount) {
+        DiscountResponse created = discountService.createDiscount(discount);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @GetMapping("/{discountId}")
-    public ResponseEntity<DiscountDto> getDiscount(@PathVariable UUID discountId) {
-        DiscountDto discount = discountService.getDiscount(discountId);
+    public ResponseEntity<DiscountResponse> getDiscount(@PathVariable UUID discountId) {
+        DiscountResponse discount = discountService.getDiscount(discountId);
         return ResponseEntity.ok(discount);
     }
 
     @GetMapping
-    public ResponseEntity<List<DiscountDto>> getAllDiscounts() {
-        List<DiscountDto> discounts = discountService.getAllDiscounts();
+    public ResponseEntity<List<DiscountResponse>> getAllDiscounts() {
+        List<DiscountResponse> discounts = discountService.getAllDiscounts();
         return ResponseEntity.ok(discounts);
     }
 
     @PutMapping("/{discountId}")
-    public ResponseEntity<DiscountDto> updateDiscount(@PathVariable UUID discountId, @RequestBody DiscountDetails discount) {
-        DiscountDto updated = discountService.updateDiscount(discountId, discount);
+    public ResponseEntity<DiscountResponse> updateDiscount(@PathVariable UUID discountId, @RequestBody DiscountRequest discount) {
+        DiscountResponse updated = discountService.updateDiscount(discountId, discount);
         return ResponseEntity.ok(updated);
     }
 

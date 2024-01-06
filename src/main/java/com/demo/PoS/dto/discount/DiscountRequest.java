@@ -1,4 +1,4 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.discount;
 
 import com.demo.PoS.model.enums.DiscountStatus;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class DiscountDetails {
+public class DiscountRequest {
 
     @NotBlank
     private String name;

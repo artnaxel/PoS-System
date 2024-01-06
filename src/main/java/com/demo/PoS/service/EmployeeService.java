@@ -1,7 +1,7 @@
 package com.demo.PoS.service;
 
-import com.demo.PoS.dto.EmployeeDetails;
-import com.demo.PoS.dto.EmployeeDto;
+import com.demo.PoS.dto.employee.EmployeeRequest;
+import com.demo.PoS.dto.employee.EmployeeResponse;
 import com.demo.PoS.model.entity.Employee;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.repository.EmployeeRepository;
@@ -24,11 +24,11 @@ public class EmployeeService {
         this.providedServiceRepository = providedServiceRepository;
     }
 
-    public List<EmployeeDto> findAllEmployees() {
+    public List<EmployeeResponse> findAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
 
         return employees.stream().map(employee ->
-                EmployeeDto.builder()
+                EmployeeResponse.builder()
                         .id(employee.getId())
                         .name(employee.getName())
                         .surname(employee.getSurname())
@@ -37,15 +37,15 @@ public class EmployeeService {
     }
 
     @Transactional
-    public EmployeeDto createEmployee(EmployeeDetails employeeDetails) {
+    public EmployeeResponse createEmployee(EmployeeRequest employeeRequest) {
         Employee employee = Employee.builder()
-                .name(employeeDetails.getName())
-                .surname(employeeDetails.getSurname())
+                .name(employeeRequest.getName())
+                .surname(employeeRequest.getSurname())
                 .build();
 
         employeeRepository.save(employee);
 
-        return EmployeeDto.builder()
+        return EmployeeResponse.builder()
                 .id(employee.getId())
                 .name(employee.getName())
                 .surname(employee.getSurname())
@@ -53,11 +53,11 @@ public class EmployeeService {
     }
 
 
-    public EmployeeDto findEmployeeById(UUID employeeId) {
+    public EmployeeResponse findEmployeeById(UUID employeeId) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
 
-        return EmployeeDto.builder()
+        return EmployeeResponse.builder()
                 .id(employee.getId())
                 .name(employee.getName())
                 .surname(employee.getSurname())
@@ -65,16 +65,16 @@ public class EmployeeService {
     }
 
     @Transactional
-    public EmployeeDto updateEmployee(UUID employeeId, EmployeeDetails employeeDetails) {
+    public EmployeeResponse updateEmployee(UUID employeeId, EmployeeRequest employeeRequest) {
         Employee existingEmployee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
 
-        existingEmployee.setName(employeeDetails.getName());
-        existingEmployee.setSurname(employeeDetails.getSurname());
+        existingEmployee.setName(employeeRequest.getName());
+        existingEmployee.setSurname(employeeRequest.getSurname());
 
         employeeRepository.save(existingEmployee);
 
-        return EmployeeDto.builder()
+        return EmployeeResponse.builder()
                 .id(existingEmployee.getId())
                 .name(existingEmployee.getName())
                 .surname(existingEmployee.getSurname())
