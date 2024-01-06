@@ -4,6 +4,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -11,7 +12,12 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-public class ProvidedServiceDetails {
+@Builder
+public class ProvidedServiceDto {
+
+    @NotBlank
+    private UUID id;
+
     @NotBlank
     private String name;
 
@@ -23,3 +29,4 @@ public class ProvidedServiceDetails {
     private BigDecimal price;
 
 }
+

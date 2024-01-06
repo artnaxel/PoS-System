@@ -1,8 +1,8 @@
 package com.demo.PoS.service;
 
 import com.demo.PoS.dto.ProvidedServiceDetails;
+import com.demo.PoS.dto.ProvidedServiceDto;
 import com.demo.PoS.exceptions.NotFoundException;
-import com.demo.PoS.model.entity.Employee;
 import com.demo.PoS.model.entity.ProvidedService;
 import com.demo.PoS.repository.EmployeeRepository;
 import com.demo.PoS.repository.ProvidedServiceRepository;
@@ -23,59 +23,72 @@ public class ProvidedServiceService {
         this.employeeRepository = employeeRepository;
     }
 
-    public List<ProvidedService> findAll() {
-        return providedServiceRepository.findAll();
+    public List<ProvidedServiceDto> getAllProvidedServices() {
+        List<ProvidedService> providedServices = providedServiceRepository.findAll();
+
+        return providedServices.stream().map(providedService ->
+                ProvidedServiceDto.builder()
+                        .id(providedService.getId())
+                        .name(providedService.getName())
+                        .description(providedService.getDescription())
+                        .price(providedService.getPrice())
+                        .build()
+        ).collect(Collectors.toList());
     }
 
     @Transactional
-    public ProvidedService createProvidedService(ProvidedServiceDetails providedServiceDetails) {
-        Set<Employee> employees = Optional.ofNullable(providedServiceDetails.getEmployeeIds())
-                .orElse(Collections.emptySet())
-                .stream()
-                .map(id -> employeeRepository.findById(id)
-                        .orElseThrow(() -> new NotFoundException("Employee not found with id: " + id)))
-                .collect(Collectors.toSet());
-
+    public ProvidedServiceDto createProvidedService(ProvidedServiceDetails providedServiceDetails) {
         ProvidedService providedService = ProvidedService.builder()
                 .name(providedServiceDetails.getName())
                 .description(providedServiceDetails.getDescription())
                 .price(providedServiceDetails.getPrice())
-                .employees(employees)
                 .build();
 
-        return providedServiceRepository.save(providedService);
+        providedServiceRepository.save(providedService);
+
+        return ProvidedServiceDto.builder()
+                .id(providedService.getId())
+                .name(providedService.getName())
+                .description(providedService.getDescription())
+                .price(providedService.getPrice())
+                .build();
     }
 
-    public ProvidedService findById(UUID providedServiceId) {
-        return providedServiceRepository.findById(providedServiceId)
-                .orElseThrow(() -> new NotFoundException("Service not found with id: " + providedServiceId));
-    }
-
-    @Transactional
-    public ProvidedService updateProvidedService(UUID providedServiceId, ProvidedServiceDetails details) {
+    public ProvidedServiceDto findById(UUID providedServiceId) {
         ProvidedService providedService = providedServiceRepository.findById(providedServiceId)
                 .orElseThrow(() -> new NotFoundException("Service not found with id: " + providedServiceId));
 
-        providedService.setName(details.getName());
-        providedService.setDescription(details.getDescription());
-        providedService.setPrice(details.getPrice());
+        return ProvidedServiceDto.builder()
+                .id(providedService.getId())
+                .name(providedService.getName())
+                .description(providedService.getDescription())
+                .price(providedService.getPrice())
+                .build();
+    }
 
-        if (details.getEmployeeIds() != null) {
-            Set<Employee> employees = details.getEmployeeIds().stream()
-                    .map(id -> employeeRepository.findById(id)
-                            .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id)))
-                    .collect(Collectors.toSet());
-            providedService.setEmployees(employees);
-        }
+    @Transactional
+    public ProvidedServiceDto updateProvidedService(UUID providedServiceId, ProvidedServiceDetails providedServiceDetails) {
+        ProvidedService providedService = providedServiceRepository.findById(providedServiceId)
+                .orElseThrow(() -> new NotFoundException("Service not found with id: " + providedServiceId));
 
-        return providedServiceRepository.save(providedService);
+        providedService.setName(providedServiceDetails.getName());
+        providedService.setDescription(providedServiceDetails.getDescription());
+        providedService.setPrice(providedServiceDetails.getPrice());
+
+        providedServiceRepository.save(providedService);
+
+        return ProvidedServiceDto.builder()
+                .id(providedService.getId())
+                .name(providedService.getName())
+                .description(providedService.getDescription())
+                .price(providedService.getPrice())
+                .build();
     }
 
     public void deleteById(UUID providedServiceId) {
         if(!providedServiceRepository.existsById(providedServiceId)) {
-            throw new NotFoundException("Employee not found with id: " + providedServiceId);
+            throw new NotFoundException("Service not found with id: " + providedServiceId);
         }
         providedServiceRepository.deleteById(providedServiceId);
     }
-
 }

@@ -1,9 +1,9 @@
 package com.demo.PoS.service;
 
 import com.demo.PoS.dto.EmployeeDetails;
+import com.demo.PoS.dto.EmployeeDto;
 import com.demo.PoS.model.entity.Employee;
 import com.demo.PoS.exceptions.NotFoundException;
-import com.demo.PoS.model.entity.ProvidedService;
 import com.demo.PoS.repository.EmployeeRepository;
 import com.demo.PoS.repository.ProvidedServiceRepository;
 import org.springframework.stereotype.Service;
@@ -24,50 +24,61 @@ public class EmployeeService {
         this.providedServiceRepository = providedServiceRepository;
     }
 
-    public List<Employee> findAllEmployees() {
-        return employeeRepository.findAll();
+    public List<EmployeeDto> findAllEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
+
+        return employees.stream().map(employee ->
+                EmployeeDto.builder()
+                        .id(employee.getId())
+                        .name(employee.getName())
+                        .surname(employee.getSurname())
+                        .build()
+        ).collect(Collectors.toList());
     }
 
     @Transactional
-    public Employee createEmployee(EmployeeDetails employeeDetails) {
-        Set<ProvidedService> services = Optional.ofNullable(employeeDetails.getServiceIds())
-                .orElse(Collections.emptySet())
-                .stream()
-                .map(id -> providedServiceRepository.findById(id)
-                        .orElseThrow(() -> new NotFoundException("Service not found with id: " + id)))
-                .collect(Collectors.toSet());
-
+    public EmployeeDto createEmployee(EmployeeDetails employeeDetails) {
         Employee employee = Employee.builder()
                 .name(employeeDetails.getName())
                 .surname(employeeDetails.getSurname())
-                .providedServices(services)
                 .build();
 
-        return employeeRepository.save(employee);
+        employeeRepository.save(employee);
+
+        return EmployeeDto.builder()
+                .id(employee.getId())
+                .name(employee.getName())
+                .surname(employee.getSurname())
+                .build();
     }
 
-    public Employee findEmployeeById(UUID employeeId) {
-        return employeeRepository.findById(employeeId)
+
+    public EmployeeDto findEmployeeById(UUID employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
+
+        return EmployeeDto.builder()
+                .id(employee.getId())
+                .name(employee.getName())
+                .surname(employee.getSurname())
+                .build();
     }
 
     @Transactional
-    public Employee updateEmployee(UUID employeeId, EmployeeDetails employeeDetails) {
+    public EmployeeDto updateEmployee(UUID employeeId, EmployeeDetails employeeDetails) {
         Employee existingEmployee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
 
         existingEmployee.setName(employeeDetails.getName());
         existingEmployee.setSurname(employeeDetails.getSurname());
 
-        if (employeeDetails.getServiceIds() != null) {
-            Set<ProvidedService> services = employeeDetails.getServiceIds().stream()
-                    .map(serviceId -> providedServiceRepository.findById(serviceId)
-                            .orElseThrow(() -> new NotFoundException("Service not found with id: " + serviceId)))
-                    .collect(Collectors.toSet());
-            existingEmployee.setProvidedServices(services);
-        }
+        employeeRepository.save(existingEmployee);
 
-        return employeeRepository.save(existingEmployee);
+        return EmployeeDto.builder()
+                .id(existingEmployee.getId())
+                .name(existingEmployee.getName())
+                .surname(existingEmployee.getSurname())
+                .build();
     }
 
     public void deleteEmployee(UUID employeeId) {
@@ -76,5 +87,4 @@ public class EmployeeService {
         }
         employeeRepository.deleteById(employeeId);
     }
-
 }

@@ -35,7 +35,7 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Item> getProductById(@PathVariable UUID productId) {
+    public ResponseEntity<Product> getProductById(@PathVariable UUID productId) {
         Product product = productService.findById(productId);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
@@ -53,8 +53,8 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}/restock")
-    public ResponseEntity<Item> restockProduct(@PathVariable UUID productId, @RequestBody RestockRequest restockRequest) {
-        Item updatedItem = productService.restockProduct(productId, restockRequest.getStock());
-        return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+    public ResponseEntity<Product> restockProduct(@PathVariable UUID productId, @RequestBody RestockRequest restockRequest) {
+        Product updatedProduct = productService.restockProduct(productId, restockRequest.getStock());
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 }

@@ -1,7 +1,7 @@
 package com.demo.PoS.controller;
 
 import com.demo.PoS.dto.ProvidedServiceDetails;
-import com.demo.PoS.model.entity.ProvidedService;
+import com.demo.PoS.dto.ProvidedServiceDto;
 import com.demo.PoS.service.ProvidedServiceService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -24,26 +24,26 @@ public class ProvidedServiceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProvidedService>> getAllProvidedServices() {
-        List<ProvidedService> services = providedServiceService.findAll();
+    public ResponseEntity<List<ProvidedServiceDto>> getAllProvidedServices() {
+        List<ProvidedServiceDto> services = providedServiceService.getAllProvidedServices();
         return new ResponseEntity<>(services, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<ProvidedService> createProvidedService(@Valid @RequestBody ProvidedServiceDetails providedServiceDetails) {
-        ProvidedService newService = providedServiceService.createProvidedService(providedServiceDetails);
-        return new ResponseEntity<>(newService, HttpStatus.CREATED);
+    public ResponseEntity<ProvidedServiceDto> createProvidedService(@Valid @RequestBody ProvidedServiceDetails providedServiceDetails) {
+        ProvidedServiceDto createdService = providedServiceService.createProvidedService(providedServiceDetails);
+        return new ResponseEntity<>(createdService, HttpStatus.CREATED);
     }
 
     @GetMapping("/{serviceId}")
-    public ResponseEntity<ProvidedService> getProvidedServiceById(@PathVariable UUID serviceId) {
-        ProvidedService service = providedServiceService.findById(serviceId);
+    public ResponseEntity<ProvidedServiceDto> getProvidedServiceById(@PathVariable UUID serviceId) {
+        ProvidedServiceDto service = providedServiceService.findById(serviceId);
         return new ResponseEntity<>(service, HttpStatus.OK);
     }
 
     @PutMapping("/{serviceId}")
-    public ResponseEntity<ProvidedService> updateProvidedService(@PathVariable UUID serviceId, @RequestBody ProvidedServiceDetails providedServiceDetails) {
-        ProvidedService updatedService = providedServiceService.updateProvidedService(serviceId, providedServiceDetails);
+    public ResponseEntity<ProvidedServiceDto> updateProvidedService(@PathVariable UUID serviceId, @RequestBody ProvidedServiceDetails providedServiceDetails) {
+        ProvidedServiceDto updatedService = providedServiceService.updateProvidedService(serviceId, providedServiceDetails);
         return new ResponseEntity<>(updatedService, HttpStatus.OK);
     }
 

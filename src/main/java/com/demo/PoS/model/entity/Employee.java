@@ -16,12 +16,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Employee extends User {
-    @ManyToMany
-    @JoinTable(
-            name = "employee_providedService",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "providedService_id")
-    )
-    private Set<ProvidedService> providedServices;
-
+    @OneToMany(mappedBy = "employee")
+    private Set<ServiceSlot> serviceSlots;
 }

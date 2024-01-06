@@ -1,6 +1,7 @@
 package com.demo.PoS.controller;
 
 import com.demo.PoS.dto.EmployeeDetails;
+import com.demo.PoS.dto.EmployeeDto;
 import com.demo.PoS.model.entity.Employee;
 import com.demo.PoS.service.EmployeeService;
 
@@ -23,26 +24,26 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Employee>> getAllEmployees() {
-        List<Employee> employees = employeeService.findAllEmployees();
+    public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
+        List<EmployeeDto> employees = employeeService.findAllEmployees();
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@Valid @RequestBody EmployeeDetails employeeDetails) {
-        Employee createdEmployee = employeeService.createEmployee(employeeDetails);
+    public ResponseEntity<EmployeeDto> createEmployee(@Valid @RequestBody EmployeeDetails employeeDetails) {
+        EmployeeDto createdEmployee = employeeService.createEmployee(employeeDetails);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
 
     @GetMapping("/{employeeId}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable UUID employeeId) {
-        Employee employee = employeeService.findEmployeeById(employeeId);
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable UUID employeeId) {
+        EmployeeDto employee = employeeService.findEmployeeById(employeeId);
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
     @PutMapping("/{employeeId}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable UUID employeeId, @Valid @RequestBody EmployeeDetails employeeDetails) {
-        Employee updatedEmployee = employeeService.updateEmployee(employeeId, employeeDetails);
+    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable UUID employeeId, @Valid @RequestBody EmployeeDetails employeeDetails) {
+        EmployeeDto updatedEmployee = employeeService.updateEmployee(employeeId, employeeDetails);
         return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
     }
 
