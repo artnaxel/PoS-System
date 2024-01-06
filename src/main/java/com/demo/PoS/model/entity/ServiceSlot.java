@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -28,9 +28,9 @@ public class ServiceSlot {
     @JoinColumn(name = "providedService_id")
     private ProvidedService providedService;
 
-    private LocalTime startTime;
+    private LocalDateTime startTime;
 
-    private LocalTime endTime;
+    private LocalDateTime endTime;
 
     private ServiceSlotStatus serviceSlotStatus;
 }

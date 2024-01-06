@@ -4,7 +4,7 @@ import com.demo.PoS.model.enums.ServiceSlotStatus;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -17,9 +17,9 @@ public class ServiceSlotDto {
 
     private UUID providedServiceId;
 
-    private LocalTime startTime;
+    private LocalDateTime startTime;
 
-    private LocalTime endTime;
+    private LocalDateTime endTime;
 
     private ServiceSlotStatus serviceSlotStatus;
 }

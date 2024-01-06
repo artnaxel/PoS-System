@@ -1,18 +1,23 @@
 package com.demo.PoS.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 public class ServiceSlotDetails {
 
-    private UUID providedServiceId;
+    @NotNull
+    private UUID serviceId;
 
+    @NotNull
     private UUID employeeId;
 
-    private LocalTime startTime;
+    @NotNull
+    private LocalDateTime startTime;
 
-    private LocalTime endTime;
+    @NotNull
+    private LocalDateTime endTime;
 }
