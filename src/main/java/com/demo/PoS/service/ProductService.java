@@ -23,7 +23,6 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final DiscountRepository discountRepository;
-    private final ProductMapper productMapper;
 
     public List<ProductResponse> findAll() {
         List<Product> products = productRepository.findAll();
@@ -40,7 +39,7 @@ public class ProductService {
     }
 
 
-    public ProductResponse saveProduct(ProductRequest productRequest) {
+    public ProductResponse createProduct(ProductRequest productRequest) {
         Product product = Product.builder()
                 .name(productRequest.getName())
                 .description(productRequest.getDescription())
@@ -50,13 +49,13 @@ public class ProductService {
 
         productRepository.save(product);
 
-        return productMapper.toProductResponse(product);
+        return ProductMapper.toProductResponse(product);
     }
 
     public ProductResponse findById(UUID productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
-        return productMapper.toProductResponse(product);
+        return ProductMapper.toProductResponse(product);
     }
 
     @Transactional
@@ -78,7 +77,7 @@ public class ProductService {
 
         productRepository.save(product);
 
-        return productMapper.toProductResponse(product);
+        return ProductMapper.toProductResponse(product);
     }
 
 
@@ -95,6 +94,6 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
 
         product.setStock(newStock);
-        return productMapper.toProductResponse(product);
+        return ProductMapper.toProductResponse(product);
     }
 }

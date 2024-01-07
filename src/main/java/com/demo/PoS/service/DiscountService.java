@@ -19,8 +19,6 @@ public class DiscountService {
 
     private final DiscountRepository discountRepository;
 
-    private final DiscountMapper discountMapper;
-
     public DiscountResponse createDiscount(DiscountRequest discountRequest) {
         Discount discount = Discount.builder()
                 .name(discountRequest.getName())
@@ -32,19 +30,21 @@ public class DiscountService {
 
         discountRepository.save(discount);
 
-        return discountMapper.toDiscountResponse(discount);
+        return DiscountMapper.toDiscountResponse(discount);
     }
 
     public DiscountResponse getDiscount(UUID id) {
        Discount discount =  discountRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Discount not found"));
 
-       return discountMapper.toDiscountResponse(discount);
+       return DiscountMapper.toDiscountResponse(discount);
     }
 
     public List<DiscountResponse> getAllDiscounts() {
         List<Discount> discounts = discountRepository.findAll();
-        return discounts.stream().map(discount -> discountMapper.toDiscountResponse(discount)).collect(Collectors.toList());
+        return discounts.stream()
+                .map(DiscountMapper::toDiscountResponse)
+                .collect(Collectors.toList());
     }
 
     public DiscountResponse updateDiscount(UUID id, DiscountRequest discountRequest) {
@@ -59,7 +59,7 @@ public class DiscountService {
 
         discountRepository.save(discount);
 
-        return discountMapper.toDiscountResponse(discount);
+        return DiscountMapper.toDiscountResponse(discount);
     }
 
     public void deleteDiscount(UUID id) {

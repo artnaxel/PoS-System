@@ -22,14 +22,11 @@ public class ProvidedServiceService {
 
     private final DiscountRepository discountRepository;
 
-    private final ProvidedServiceMapper providedServiceMapper;
-
     public List<ProvidedServiceResponse> getAllProvidedServices() {
         List<ProvidedService> providedServices = providedServiceRepository.findAll();
 
-        return providedServices.stream().map(providedService ->
-                providedServiceMapper.toProvidedServiceResponse(providedService)
-        ).collect(Collectors.toList());
+        return providedServices.stream().map(ProvidedServiceMapper::toProvidedServiceResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -42,7 +39,7 @@ public class ProvidedServiceService {
 
         providedServiceRepository.save(providedService);
 
-        return providedServiceMapper.toProvidedServiceResponse(providedService);
+        return ProvidedServiceMapper.toProvidedServiceResponse(providedService);
     }
 
     public ProvidedServiceResponse findById(UUID providedServiceId) {
@@ -76,7 +73,7 @@ public class ProvidedServiceService {
 
         providedServiceRepository.save(providedService);
 
-        return providedServiceMapper.toProvidedServiceResponse(providedService);
+        return ProvidedServiceMapper.toProvidedServiceResponse(providedService);
     }
 
     public void deleteById(UUID providedServiceId) {
