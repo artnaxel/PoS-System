@@ -1,6 +1,6 @@
 package com.demo.PoS.mappers;
 
-import com.demo.PoS.dto.ReceiptDto;
+import com.demo.PoS.dto.receipt.ReceiptDto;
 import com.demo.PoS.model.entity.Receipt;
 import org.springframework.stereotype.Component;
 

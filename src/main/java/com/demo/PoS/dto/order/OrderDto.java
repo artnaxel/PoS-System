@@ -1,4 +1,4 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.order;
 
 import com.demo.PoS.model.enums.OrderStatus;
 import lombok.Builder;

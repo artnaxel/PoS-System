@@ -1,7 +1,7 @@
 package com.demo.PoS.mappers;
 
-import com.demo.PoS.dto.OrderDiscountDto;
-import com.demo.PoS.dto.OrderDto;
+import com.demo.PoS.dto.order.OrderDiscountDto;
+import com.demo.PoS.dto.order.OrderDto;
 import com.demo.PoS.model.entity.Order;
 import com.demo.PoS.model.relationship.OrderProduct;
 import org.springframework.stereotype.Component;
