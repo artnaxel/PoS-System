@@ -1,4 +1,4 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.providedService;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -7,11 +7,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
-public class ProvidedServiceDetails {
+public class ProvidedServiceRequest {
     @NotBlank
     private String name;
 
@@ -22,6 +21,6 @@ public class ProvidedServiceDetails {
     @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal price;
 
-    @NotNull
-    private Set<@NotNull UUID> employeeIds;
+    private UUID discountId;
+
 }

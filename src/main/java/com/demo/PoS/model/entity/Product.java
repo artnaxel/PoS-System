@@ -1,7 +1,11 @@
 package com.demo.PoS.model.entity;
 
 import jakarta.persistence.Entity;
-import lombok.*;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -14,8 +18,8 @@ public class Product extends Item {
 
     private Integer stock;
 
-    @Builder.Default
-    private PosTimestamps timestamps = new PosTimestamps();
+    @ManyToOne
+    private Discount discount;
 
 }
 

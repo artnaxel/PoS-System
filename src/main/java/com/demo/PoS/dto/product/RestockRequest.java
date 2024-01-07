@@ -1,4 +1,4 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.product;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

@@ -1,9 +1,12 @@
 package com.demo.PoS.model.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.cglib.util.ParallelSorter;
 
 import java.util.Set;
 
@@ -14,15 +17,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Employee extends User {
-    @ManyToMany
-    @JoinTable(
-            name = "employee_providedService",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "providedService_id")
-    )
-    private Set<ProvidedService> providedServices;
-
-    @Builder.Default
-    private PosTimestamps timestamps = new PosTimestamps();
-
+    @OneToMany(mappedBy = "employee")
+    private Set<ServiceSlot> serviceSlots;
 }
