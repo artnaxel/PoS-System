@@ -7,10 +7,10 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @Validated
 @RestController
@@ -27,6 +27,18 @@ public class ServiceSlotController {
     public ResponseEntity<ServiceSlotResponse> createServiceSlot(@RequestBody @Valid ServiceSlotRequest request) {
         ServiceSlotResponse serviceSlot = serviceSlotService.createServiceSlot(request);
         return new ResponseEntity<>(serviceSlot, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/service/{serviceId}")
+    public ResponseEntity<List<ServiceSlotResponse>> getAvailableSlotsByService(@PathVariable UUID serviceId) {
+        List<ServiceSlotResponse> slots = serviceSlotService.getAvailableSlotsByService(serviceId);
+        return ResponseEntity.ok(slots);
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<ServiceSlotResponse>> getAvailableSlotsByEmployee(@PathVariable UUID employeeId) {
+        List<ServiceSlotResponse> slots = serviceSlotService.getAvailableSlotsByEmployee(employeeId);
+        return ResponseEntity.ok(slots);
     }
 }
 
