@@ -20,8 +20,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(InvalidRestockOperationException.class)
-    public ResponseEntity<?> handleInvalidRestockOperationException(InvalidRestockOperationException exception) {
+    @ExceptionHandler({InvalidRestockOperationException.class, IllegalArgumentException.class})
+    public ResponseEntity<?> handleInvalidRestockOperationException(Exception exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

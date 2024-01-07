@@ -46,13 +46,15 @@ public class ServiceSlotService {
         return ServiceSlotMapper.toServiceSlotResponse(serviceSlot);
     }
 
-    public List<ServiceSlotResponse> getAvailableSlotsByService(UUID serviceId) {
+    public List<ServiceSlot> findAvailableSlotsByService(UUID serviceId) {
         ProvidedService service = providedServiceRepository.findById(serviceId)
                 .orElseThrow(() -> new NotFoundException("Service not found with id: " + serviceId));
 
-        List<ServiceSlot> slots = serviceSlotRepository.findAllByProvidedServiceAndStartTimeAfter(service, LocalDateTime.now());
+        return serviceSlotRepository.findAllByProvidedServiceAndStartTimeAfter(service, LocalDateTime.now());
+    }
 
-        return slots.stream()
+    public List<ServiceSlotResponse> getAvailableSlotsByService(UUID serviceId) {
+        return findAvailableSlotsByService(serviceId).stream()
                 .map(ServiceSlotMapper::toServiceSlotResponse)
                 .collect(Collectors.toList());
     }
