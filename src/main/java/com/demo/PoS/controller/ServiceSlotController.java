@@ -3,13 +3,16 @@ package com.demo.PoS.controller;
 import com.demo.PoS.dto.serviceSlot.ServiceSlotRequest;
 import com.demo.PoS.dto.serviceSlot.ServiceSlotResponse;
 import com.demo.PoS.service.ServiceSlotService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/serviceSlots")
 public class ServiceSlotController {
@@ -21,7 +24,7 @@ public class ServiceSlotController {
     }
 
     @PostMapping
-    public ResponseEntity<ServiceSlotResponse> createServiceSlot(@RequestBody ServiceSlotRequest request) {
+    public ResponseEntity<ServiceSlotResponse> createServiceSlot(@RequestBody @Valid ServiceSlotRequest request) {
         ServiceSlotResponse serviceSlot = serviceSlotService.createServiceSlot(request);
         return new ResponseEntity<>(serviceSlot, HttpStatus.CREATED);
     }

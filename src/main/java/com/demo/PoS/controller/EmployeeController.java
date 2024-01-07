@@ -6,12 +6,14 @@ import com.demo.PoS.service.EmployeeService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
@@ -29,7 +31,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeResponse> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
+    public ResponseEntity<EmployeeResponse> createEmployee(@RequestBody @Valid EmployeeRequest employeeRequest) {
         EmployeeResponse createdEmployee = employeeService.createEmployee(employeeRequest);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
@@ -41,7 +43,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeId}")
-    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable UUID employeeId, @Valid @RequestBody EmployeeRequest employeeRequest) {
+    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeRequest employeeRequest) {
         EmployeeResponse updatedEmployee = employeeService.updateEmployee(employeeId, employeeRequest);
         return ResponseEntity.ok(updatedEmployee);
     }

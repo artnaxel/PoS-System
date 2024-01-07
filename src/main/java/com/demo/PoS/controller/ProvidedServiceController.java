@@ -42,7 +42,7 @@ public class ProvidedServiceController {
     }
 
     @PutMapping("/{serviceId}")
-    public ResponseEntity<ProvidedServiceResponse> updateProvidedService(@PathVariable UUID serviceId, @RequestBody ProvidedServiceRequest providedServiceRequest) {
+    public ResponseEntity<ProvidedServiceResponse> updateProvidedService(@PathVariable UUID serviceId, @Valid @RequestBody ProvidedServiceRequest providedServiceRequest) {
         ProvidedServiceResponse updatedService = providedServiceService.updateProvidedService(serviceId, providedServiceRequest);
         return ResponseEntity.ok(updatedService);
     }
