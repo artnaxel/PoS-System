@@ -30,7 +30,7 @@ public class ProvidedServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<ProvidedServiceResponse> createProvidedService(@Valid @RequestBody ProvidedServiceRequest providedServiceRequest) {
+    public ResponseEntity<ProvidedServiceResponse> createProvidedService(@RequestBody @Valid ProvidedServiceRequest providedServiceRequest) {
         ProvidedServiceResponse createdService = providedServiceService.createProvidedService(providedServiceRequest);
         return new ResponseEntity<>(createdService, HttpStatus.CREATED);
     }
@@ -42,7 +42,7 @@ public class ProvidedServiceController {
     }
 
     @PutMapping("/{serviceId}")
-    public ResponseEntity<ProvidedServiceResponse> updateProvidedService(@PathVariable UUID serviceId, @Valid @RequestBody ProvidedServiceRequest providedServiceRequest) {
+    public ResponseEntity<ProvidedServiceResponse> updateProvidedService(@PathVariable UUID serviceId, @RequestBody @Valid ProvidedServiceRequest providedServiceRequest) {
         ProvidedServiceResponse updatedService = providedServiceService.updateProvidedService(serviceId, providedServiceRequest);
         return ResponseEntity.ok(updatedService);
     }
