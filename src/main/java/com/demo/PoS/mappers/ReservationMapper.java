@@ -10,6 +10,7 @@ public class ReservationMapper {
         return ReservationResponseDto.builder()
                 .reservationId(reservation.getId())
                 .orderId(reservation.getOrder().getId())
+                .serviceId(reservation.getServiceSlot().getProvidedService().getId())
                 .startTime(reservation.getServiceSlot().getStartTime())
                 .endTime(reservation.getServiceSlot().getEndTime())
                 .creationTime(reservation.getPosTimestamps().getCreatedAt().toLocalDateTime())

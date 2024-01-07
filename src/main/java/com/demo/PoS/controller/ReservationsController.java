@@ -35,6 +35,12 @@ public class ReservationsController {
         return ResponseEntity.ok(reservationService.createReservation(reservationResponseDto));
     }
 
+    @PutMapping("/{reservationId}")
+    public ResponseEntity<Void> editReservation(@PathVariable UUID reservationId, @RequestBody @Valid ReservationRequestDto reservationResponseDto) {
+        reservationService.editReservation(reservationId, reservationResponseDto);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{reservationId}/cancel")
     public ResponseEntity<Void> cancelReservation(@PathVariable UUID reservationId) {
         reservationService.cancelReservation(reservationId);

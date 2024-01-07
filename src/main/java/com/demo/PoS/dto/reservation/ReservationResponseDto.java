@@ -11,6 +11,7 @@ import java.util.UUID;
 public record ReservationResponseDto(
         UUID reservationId,
         UUID orderId,
+        UUID serviceId,
         LocalDateTime startTime,
         LocalDateTime endTime,
         LocalDateTime creationTime,
