@@ -39,7 +39,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void createOrder(OrderDto dto) {
+    public Order createOrder(OrderDto dto) {
         Customer customer = customerRepository.findById(dto.customerId()).orElseThrow();
         Employee employee = employeeRepository.findById(dto.employeeId()).orElseThrow();
         Order order = Order.builder()
@@ -47,8 +47,9 @@ public class OrderService {
                 .customer(customer)
                 .employee(employee)
                 .build();
-        orderRepository.save(order);
+        Order createdOrder = orderRepository.save(order);
         attachProducts(order, dto.orderProducts());
+        return createdOrder;
     }
 
     @Transactional

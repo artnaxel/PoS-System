@@ -46,9 +46,9 @@ public class OrdersController {
     }
 
     @PostMapping
-    ResponseEntity<Void> createOrder(@RequestBody OrderDto orderDto) {
-        orderService.createOrder(orderDto);
-        return ResponseEntity.noContent().build();
+    ResponseEntity<UUID> createOrder(@RequestBody OrderDto orderDto) {
+        Order order = orderService.createOrder(orderDto);
+        return ResponseEntity.ok(order.getId());
     }
 
     @PutMapping("/{orderId}")
