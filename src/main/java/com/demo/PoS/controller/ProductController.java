@@ -1,9 +1,8 @@
 package com.demo.PoS.controller;
 
-import com.demo.PoS.dto.ProductDetails;
-import com.demo.PoS.dto.RestockRequest;
-import com.demo.PoS.model.entity.Item;
-import com.demo.PoS.model.entity.Product;
+import com.demo.PoS.dto.product.ProductRequest;
+import com.demo.PoS.dto.product.ProductResponse;
+import com.demo.PoS.dto.product.RestockRequest;
 import com.demo.PoS.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,38 +22,38 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.findAll();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        List<ProductResponse> products = productService.findAll();
+        return ResponseEntity.ok(products);
     }
 
     @PostMapping
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        Product savedProduct = productService.saveProduct(product);
+    public ResponseEntity<ProductResponse> addProduct(@RequestBody ProductRequest product) {
+        ProductResponse savedProduct = productService.saveProduct(product);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Item> getProductById(@PathVariable UUID productId) {
-        Product product = productService.findById(productId);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable UUID productId) {
+        ProductResponse product = productService.findById(productId);
+        return ResponseEntity.ok(product);
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable UUID productId, @RequestBody ProductDetails productDetails) {
-        Product updatedProduct = productService.updateProduct(productId, productDetails);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable UUID productId, @RequestBody ProductRequest productRequest) {
+        ProductResponse updatedProduct = productService.updateProduct(productId, productRequest);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable UUID productId) {
         productService.deleteById(productId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{productId}/restock")
-    public ResponseEntity<Item> restockProduct(@PathVariable UUID productId, @RequestBody RestockRequest restockRequest) {
-        Item updatedItem = productService.restockProduct(productId, restockRequest.getStock());
-        return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+    public ResponseEntity<ProductResponse> restockProduct(@PathVariable UUID productId, @RequestBody RestockRequest restockRequest) {
+        ProductResponse updatedProduct = productService.restockProduct(productId, restockRequest.getStock());
+        return ResponseEntity.ok(updatedProduct);
     }
 }

@@ -1,12 +1,13 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.product;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
-public class ProductDetails {
+public class ProductRequest {
 
     @NotBlank
     private String name;
@@ -21,5 +22,7 @@ public class ProductDetails {
     @NotNull
     @Min(value = 0)
     private Integer stock;
+
+    private UUID discountId;
 
 }
