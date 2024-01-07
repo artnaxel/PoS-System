@@ -15,14 +15,14 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @Entity
 @Table(name = "pos_order")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
     public OrderProduct addProduct(Product product, int count) {
-        var op = new OrderProduct();
+        OrderProduct op = new OrderProduct();
         op.setOrder(this);
         op.setProduct(product);
         op.setCount(count);

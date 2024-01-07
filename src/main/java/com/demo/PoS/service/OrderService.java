@@ -2,6 +2,7 @@ package com.demo.PoS.service;
 
 import com.demo.PoS.dto.OrderDto;
 import com.demo.PoS.dto.OrderProductDto;
+import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.model.entity.*;
 import com.demo.PoS.model.enums.OrderStatus;
 import com.demo.PoS.model.relationship.OrderProduct;
@@ -14,10 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class OrderService {
     }
 
     public Order findOrder(UUID id) {
-        return orderRepository.findById(id).orElseThrow();
+        return orderRepository.findById(id).orElseThrow(() -> new NotFoundException("Order not found"));
     }
 
     @Transactional
@@ -54,31 +55,34 @@ public class OrderService {
     public void editOrder(UUID id, OrderDto dto) {
         if (!id.equals(dto.id()))
             throw new IllegalArgumentException("Cannot change the ID of an order");
-        Order order = orderRepository.findById(id).orElseThrow();
-        Employee employee = dto.employeeId() == null ? order.getEmployee() : employeeRepository.findById(dto.employeeId()).orElseThrow();
-        Customer customer = dto.customerId() == null ? order.getCustomer() : customerRepository.findById(dto.customerId()).orElseThrow();
-        order.setCustomer(customer);
-        order.setEmployee(employee);
-        order.setTippingAmount(dto.tippingAmount());
-        order.setOrderStatus(dto.status());
 
-        Set<OrderProduct> orderProducts = dto.orderProducts().stream()
-                .map(it -> {
-                    OrderProduct op = new OrderProduct();
-                    op.getId().setProductId(it.productId());
-                    op.getId().setOrderId(order.getId());
-                    op.setCount(it.count());
-                    return op;
-                }).collect(Collectors.toSet());
-        var dtoIds = orderProducts.stream().map(OrderProduct::getId).collect(Collectors.toSet());
-        var removedOrderProducts = order.getOrderProducts().stream()
-                .map(OrderProduct::getId)
-                .filter(it -> !dtoIds.contains(it)).toList();
-        var addedOrderProducts = orderProducts.stream().filter(it -> !order.getOrderProducts().contains(it)).collect(Collectors.toSet());
-        orderProductRepository.deleteAllById(removedOrderProducts);
-        orderProductRepository.saveAll(addedOrderProducts);
-        order.setOrderProducts(orderProducts);
-        orderRepository.save(order);
+        Order order = orderRepository.findOrderWithProductsById(id).orElseThrow(() -> new NotFoundException("Order not found"));
+        Employee employee = dto.employeeId() == null ? order.getEmployee() : employeeRepository.findById(dto.employeeId()).orElseThrow(() -> new NotFoundException("Employee not found"));
+        Customer customer = dto.customerId() == null ? order.getCustomer() : customerRepository.findById(dto.customerId()).orElseThrow(() -> new NotFoundException("Customer not found"));
+
+        for(OrderProductDto updatedProduct : Optional.ofNullable(dto.orderProducts()).orElse(Collections.emptyList())) {
+            Optional<OrderProduct> op = order.getOrderProducts().stream()
+                    .filter(it -> it.getId().getProductId().equals(updatedProduct.productId()))
+                    .findFirst();
+            if(op.isEmpty()) {
+                orderProductRepository.save(order.addProduct(Product.builder()
+                        .id(updatedProduct.productId())
+                        .build(), updatedProduct.count()));
+            }
+            else {
+                op.get().setCount(updatedProduct.count());
+                orderProductRepository.save(op.get());
+            }
+        }
+
+        Order updatedOrder = order.toBuilder()
+                .customer(customer)
+                .employee(employee)
+                .tippingAmount(dto.tippingAmount())
+                .orderStatus(dto.status())
+                .build();
+
+        orderRepository.save(updatedOrder);
     }
 
     @Transactional

@@ -10,7 +10,7 @@ import org.hibernate.annotations.Mutability;
 import java.util.UUID;
 @Data
 @Entity
-@Table(name = "pos_order_item")
+@Table(name = "pos_order_product")
 public class OrderProduct {
     @EmbeddedId
     private final OrderProductKey id;

@@ -26,40 +26,45 @@ public class OrdersController {
 
     @GetMapping
     ResponseEntity<List<OrderDto>> listOrders() {
-        return new ResponseEntity<>(
-                orderService.findAllOrders().stream().map(Order::toOrderDto).toList(), HttpStatus.OK);
+        return ResponseEntity.ok(
+                orderService.findAllOrders().stream().map(Order::toOrderDto).toList());
     }
 
     @GetMapping("/{orderId}")
     ResponseEntity<OrderDto> getOrder(@PathVariable UUID orderId) {
-        return new ResponseEntity<>(orderService.findOrder(orderId).toOrderDto(), HttpStatus.OK);
+        return ResponseEntity.ok(orderService.findOrder(orderId).toOrderDto());
     }
 
     @GetMapping("/{orderId}/discount")
     ResponseEntity<OrderDiscountDto> getOrderDiscount(@PathVariable UUID orderId) {
-        return new ResponseEntity<>(orderService.findOrder(orderId).toOrderDiscountDto(), HttpStatus.OK);
+        return ResponseEntity.ok(orderService.findOrder(orderId).toOrderDiscountDto());
     }
 
     @GetMapping("/{orderId}/receipt")
     ResponseEntity<ReceiptDto> getOrderReceipt(@PathVariable UUID orderId) {
-        return new ResponseEntity<>(orderService.generateReceipt(orderId).toReceiptDto(), HttpStatus.OK);
+        return ResponseEntity.ok(orderService.generateReceipt(orderId).toReceiptDto());
     }
 
     @PostMapping
-    ResponseEntity<String> createOrder(@RequestBody OrderDto orderDto) {
+    ResponseEntity<Void> createOrder(@RequestBody OrderDto orderDto) {
         orderService.createOrder(orderDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{orderId}")
-    ResponseEntity<String> editOrder(@PathVariable UUID orderId, @Valid @RequestBody OrderDto dto) {
+    ResponseEntity<Void> editOrder(@PathVariable UUID orderId, @Valid @RequestBody OrderDto dto) {
         orderService.editOrder(orderId, dto);
-        return new ResponseEntity<>( HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{orderId}/cancel")
-    ResponseEntity<String> cancelOrder(@PathVariable UUID orderId) {
+    ResponseEntity<Void> cancelOrder(@PathVariable UUID orderId) {
         orderService.cancelOrder(orderId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/test")
+    ResponseEntity<Void> testing() {
+        throw new RuntimeException("Testing");
     }
 }

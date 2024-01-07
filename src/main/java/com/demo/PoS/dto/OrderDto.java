@@ -13,7 +13,6 @@ public record OrderDto (
         UUID id,
         UUID customerId,
         UUID employeeId,
-        @NotNull
         List<OrderProductDto> orderProducts,
         BigDecimal tippingAmount,
         OrderStatus status

@@ -1,5 +1,6 @@
 package com.demo.PoS.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({NotFoundException.class, NoSuchElementException.class})
@@ -34,6 +36,12 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+    @ExceptionHandler({Exception.class})
+    public ResponseEntity<Void> lastResort(Exception e) {
+        log.error("Uncaught exception!", e);
+        return ResponseEntity.internalServerError().build();
     }
 
 }
