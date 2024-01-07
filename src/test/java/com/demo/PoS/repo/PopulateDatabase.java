@@ -7,6 +7,7 @@ import com.demo.PoS.model.entity.Product;
 import com.demo.PoS.model.enums.OrderStatus;
 import com.demo.PoS.repository.*;
 import com.demo.PoS.repository.relations.OrderProductRepository;
+import com.demo.PoS.service.OrderService;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -32,6 +33,9 @@ public class PopulateDatabase {
     private CustomerRepository customerRepository;
     @Autowired
     private ReceiptRepository receiptRepository;
+
+    @Autowired
+    private OrderService orderService;
 
     private final Faker faker = new Faker();
 
@@ -97,7 +101,7 @@ public class PopulateDatabase {
         Order order = orderRepository.findAll().getFirst();
         for (Product product : productRepository.findAll()) {
             orderProductRepository.save(
-                    order.addProduct(product, faker.number().numberBetween(1, 10))
+                    orderService.addProduct(order, product, faker.number().numberBetween(1, 10))
             );
         }
         orderRepository.save(order);
