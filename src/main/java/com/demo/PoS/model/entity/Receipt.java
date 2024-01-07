@@ -1,6 +1,5 @@
 package com.demo.PoS.model.entity;
 
-import com.demo.PoS.dto.ReceiptDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,11 +22,4 @@ public class Receipt {
     @Embedded
     @Builder.Default
     private PosTimestamps timestamps = new PosTimestamps();
-
-    public ReceiptDto toReceiptDto() {
-        return new ReceiptDto(
-                this.order.getId(),
-                this.text
-        );
-    }
 }

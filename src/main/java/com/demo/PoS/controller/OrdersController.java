@@ -8,7 +8,6 @@ import com.demo.PoS.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,22 +26,22 @@ public class OrdersController {
     @GetMapping
     ResponseEntity<List<OrderDto>> listOrders() {
         return ResponseEntity.ok(
-                orderService.findAllOrders().stream().map(Order::toOrderDto).toList());
+                orderService.getAllOrders());
     }
 
     @GetMapping("/{orderId}")
     ResponseEntity<OrderDto> getOrder(@PathVariable UUID orderId) {
-        return ResponseEntity.ok(orderService.findOrder(orderId).toOrderDto());
+        return ResponseEntity.ok(orderService.getOrder(orderId));
     }
 
     @GetMapping("/{orderId}/discount")
     ResponseEntity<OrderDiscountDto> getOrderDiscount(@PathVariable UUID orderId) {
-        return ResponseEntity.ok(orderService.findOrder(orderId).toOrderDiscountDto());
+        return ResponseEntity.ok(orderService.getOrderDiscount(orderId));
     }
 
     @GetMapping("/{orderId}/receipt")
     ResponseEntity<ReceiptDto> getOrderReceipt(@PathVariable UUID orderId) {
-        return ResponseEntity.ok(orderService.generateReceipt(orderId).toReceiptDto());
+        return ResponseEntity.ok(orderService.generateReceipt(orderId));
     }
 
     @PostMapping
@@ -63,8 +62,4 @@ public class OrdersController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/test")
-    ResponseEntity<Void> testing() {
-        throw new RuntimeException("Testing");
-    }
 }
