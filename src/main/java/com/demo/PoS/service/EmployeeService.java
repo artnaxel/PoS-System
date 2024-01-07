@@ -19,14 +19,11 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    private final EmployeeMapper employeeMapper;
-
     public List<EmployeeResponse> findAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
 
-        return employees.stream().map(employee ->
-                employeeMapper.toEmployeeResponse(employee)
-        ).collect(Collectors.toList());
+        return employees.stream().map(EmployeeMapper::toEmployeeResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -38,7 +35,7 @@ public class EmployeeService {
 
         employeeRepository.save(employee);
 
-        return employeeMapper.toEmployeeResponse(employee);
+        return EmployeeMapper.toEmployeeResponse(employee);
     }
 
 
@@ -46,7 +43,7 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
 
-        return employeeMapper.toEmployeeResponse(employee);
+        return EmployeeMapper.toEmployeeResponse(employee);
     }
 
     @Transactional
@@ -59,7 +56,7 @@ public class EmployeeService {
 
         employeeRepository.save(existingEmployee);
 
-        return employeeMapper.toEmployeeResponse(existingEmployee);
+        return EmployeeMapper.toEmployeeResponse(existingEmployee);
     }
 
     public void deleteEmployee(UUID employeeId) {

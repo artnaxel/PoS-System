@@ -3,6 +3,7 @@ package com.demo.PoS.service;
 import com.demo.PoS.dto.serviceSlot.ServiceSlotRequest;
 import com.demo.PoS.dto.serviceSlot.ServiceSlotResponse;
 import com.demo.PoS.exceptions.NotFoundException;
+import com.demo.PoS.mappers.ServiceSlotMapper;
 import com.demo.PoS.model.entity.Employee;
 import com.demo.PoS.model.entity.ProvidedService;
 import com.demo.PoS.model.entity.ServiceSlot;
@@ -12,6 +13,11 @@ import com.demo.PoS.repository.ProvidedServiceRepository;
 import com.demo.PoS.repository.ServiceSlotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,14 +43,29 @@ public class ServiceSlotService {
 
         serviceSlotRepository.save(serviceSlot);
 
-        return ServiceSlotResponse.builder()
-                .id(serviceSlot.getId())
-                .employeeId(serviceSlot.getEmployee().getId())
-                .providedServiceId(serviceSlot.getProvidedService().getId())
-                .startTime(serviceSlot.getStartTime())
-                .endTime(serviceSlot.getEndTime())
-                .serviceSlotStatus(serviceSlot.getServiceSlotStatus())
-                .build();
+        return ServiceSlotMapper.toServiceSlotResponse(serviceSlot);
+    }
+
+    public List<ServiceSlotResponse> getAvailableSlotsByService(UUID serviceId) {
+        ProvidedService service = providedServiceRepository.findById(serviceId)
+                .orElseThrow(() -> new NotFoundException("Service not found with id: " + serviceId));
+
+        List<ServiceSlot> slots = serviceSlotRepository.findAllByProvidedServiceAndStartTimeAfter(service, LocalDateTime.now());
+
+        return slots.stream()
+                .map(ServiceSlotMapper::toServiceSlotResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<ServiceSlotResponse> getAvailableSlotsByEmployee(UUID employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
+
+        List<ServiceSlot> slots = serviceSlotRepository.findAllByEmployeeAndStartTimeAfter(employee, LocalDateTime.now());
+
+        return slots.stream()
+                .map(ServiceSlotMapper::toServiceSlotResponse)
+                .collect(Collectors.toList());
     }
 }
 

@@ -3,13 +3,16 @@ package com.demo.PoS.controller;
 import com.demo.PoS.dto.discount.DiscountRequest;
 import com.demo.PoS.dto.discount.DiscountResponse;
 import com.demo.PoS.service.DiscountService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/discounts")
 public class DiscountController {
@@ -21,7 +24,7 @@ public class DiscountController {
     }
 
     @PostMapping
-    public ResponseEntity<DiscountResponse> createDiscount(@RequestBody DiscountRequest discount) {
+    public ResponseEntity<DiscountResponse> createDiscount(@RequestBody @Valid DiscountRequest discount) {
         DiscountResponse created = discountService.createDiscount(discount);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
@@ -39,7 +42,7 @@ public class DiscountController {
     }
 
     @PutMapping("/{discountId}")
-    public ResponseEntity<DiscountResponse> updateDiscount(@PathVariable UUID discountId, @RequestBody DiscountRequest discount) {
+    public ResponseEntity<DiscountResponse> updateDiscount(@PathVariable UUID discountId, @RequestBody @Valid DiscountRequest discount) {
         DiscountResponse updated = discountService.updateDiscount(discountId, discount);
         return ResponseEntity.ok(updated);
     }
