@@ -10,22 +10,16 @@ import com.demo.PoS.model.enums.ServiceSlotStatus;
 import com.demo.PoS.repository.EmployeeRepository;
 import com.demo.PoS.repository.ProvidedServiceRepository;
 import com.demo.PoS.repository.ServiceSlotRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ServiceSlotService {
 
     private final ServiceSlotRepository serviceSlotRepository;
     private final EmployeeRepository employeeRepository;
     private final ProvidedServiceRepository providedServiceRepository;
-
-    public ServiceSlotService(ServiceSlotRepository serviceSlotRepository,
-                              EmployeeRepository employeeRepository,
-                              ProvidedServiceRepository providedServiceRepository) {
-        this.serviceSlotRepository = serviceSlotRepository;
-        this.employeeRepository = employeeRepository;
-        this.providedServiceRepository = providedServiceRepository;
-    }
 
     public ServiceSlotResponse createServiceSlot(ServiceSlotRequest request) {
         Employee employee = employeeRepository.findById(request.getEmployeeId())

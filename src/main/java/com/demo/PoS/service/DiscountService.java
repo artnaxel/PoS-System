@@ -3,8 +3,10 @@ package com.demo.PoS.service;
 import com.demo.PoS.dto.discount.DiscountRequest;
 import com.demo.PoS.dto.discount.DiscountResponse;
 import com.demo.PoS.exceptions.NotFoundException;
+import com.demo.PoS.mappers.DiscountMapper;
 import com.demo.PoS.model.entity.Discount;
 import com.demo.PoS.repository.DiscountRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,13 +14,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DiscountService {
 
     private final DiscountRepository discountRepository;
 
-    public DiscountService(DiscountRepository discountRepository) {
-        this.discountRepository = discountRepository;
-    }
+    private final DiscountMapper discountMapper;
 
     public DiscountResponse createDiscount(DiscountRequest discountRequest) {
         Discount discount = Discount.builder()
@@ -31,19 +32,19 @@ public class DiscountService {
 
         discountRepository.save(discount);
 
-        return convertToDto(discount);
+        return discountMapper.toDiscountResponse(discount);
     }
 
     public DiscountResponse getDiscount(UUID id) {
        Discount discount =  discountRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Discount not found"));
 
-       return convertToDto(discount);
+       return discountMapper.toDiscountResponse(discount);
     }
 
     public List<DiscountResponse> getAllDiscounts() {
         List<Discount> discounts = discountRepository.findAll();
-        return discounts.stream().map(this::convertToDto).collect(Collectors.toList());
+        return discounts.stream().map(discount -> discountMapper.toDiscountResponse(discount)).collect(Collectors.toList());
     }
 
     public DiscountResponse updateDiscount(UUID id, DiscountRequest discountRequest) {
@@ -58,19 +59,9 @@ public class DiscountService {
 
         discountRepository.save(discount);
 
-        return convertToDto(discount);
+        return discountMapper.toDiscountResponse(discount);
     }
 
-    private DiscountResponse convertToDto(Discount discount) {
-        return DiscountResponse.builder()
-                .id(discount.getId())
-                .name(discount.getName())
-                .discountRate(discount.getDiscountRate())
-                .validFrom(discount.getValidFrom())
-                .validUntil(discount.getValidUntil())
-                .discountStatus(discount.getDiscountStatus())
-                .build();
-    }
     public void deleteDiscount(UUID id) {
         discountRepository.deleteById(id);
     }

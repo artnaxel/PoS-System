@@ -3,39 +3,32 @@ package com.demo.PoS.service;
 import com.demo.PoS.dto.providedService.ProvidedServiceRequest;
 import com.demo.PoS.dto.providedService.ProvidedServiceResponse;
 import com.demo.PoS.exceptions.NotFoundException;
+import com.demo.PoS.mappers.ProvidedServiceMapper;
 import com.demo.PoS.model.entity.Discount;
 import com.demo.PoS.model.entity.ProvidedService;
 import com.demo.PoS.repository.DiscountRepository;
 import com.demo.PoS.repository.ProvidedServiceRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 @Service
+@RequiredArgsConstructor
 public class ProvidedServiceService {
 
     private final ProvidedServiceRepository providedServiceRepository;
 
     private final DiscountRepository discountRepository;
 
-    public ProvidedServiceService(ProvidedServiceRepository providedServiceRepository,
-                                  DiscountRepository discountRepository) {
-        this.providedServiceRepository = providedServiceRepository;
-        this.discountRepository = discountRepository;
-    }
+    private final ProvidedServiceMapper providedServiceMapper;
 
     public List<ProvidedServiceResponse> getAllProvidedServices() {
         List<ProvidedService> providedServices = providedServiceRepository.findAll();
 
         return providedServices.stream().map(providedService ->
-                ProvidedServiceResponse.builder()
-                        .id(providedService.getId())
-                        .name(providedService.getName())
-                        .description(providedService.getDescription())
-                        .price(providedService.getPrice())
-                        .discountId(Optional.ofNullable(providedService.getDiscount()).map(Discount::getId).orElse(null))
-                        .build()
+                providedServiceMapper.toProvidedServiceResponse(providedService)
         ).collect(Collectors.toList());
     }
 
@@ -49,13 +42,7 @@ public class ProvidedServiceService {
 
         providedServiceRepository.save(providedService);
 
-        return ProvidedServiceResponse.builder()
-                .id(providedService.getId())
-                .name(providedService.getName())
-                .description(providedService.getDescription())
-                .price(providedService.getPrice())
-                .discountId(Optional.ofNullable(providedService.getDiscount()).map(Discount::getId).orElse(null))
-                .build();
+        return providedServiceMapper.toProvidedServiceResponse(providedService);
     }
 
     public ProvidedServiceResponse findById(UUID providedServiceId) {
@@ -89,13 +76,7 @@ public class ProvidedServiceService {
 
         providedServiceRepository.save(providedService);
 
-        return ProvidedServiceResponse.builder()
-                .id(providedService.getId())
-                .name(providedService.getName())
-                .description(providedService.getDescription())
-                .price(providedService.getPrice())
-                .discountId(Optional.ofNullable(providedService.getDiscount()).map(Discount::getId).orElse(null))
-                .build();
+        return providedServiceMapper.toProvidedServiceResponse(providedService);
     }
 
     public void deleteById(UUID providedServiceId) {

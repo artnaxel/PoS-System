@@ -26,7 +26,7 @@ public class ProvidedServiceController {
     @GetMapping
     public ResponseEntity<List<ProvidedServiceResponse>> getAllProvidedServices() {
         List<ProvidedServiceResponse> services = providedServiceService.getAllProvidedServices();
-        return new ResponseEntity<>(services, HttpStatus.OK);
+        return ResponseEntity.ok(services);
     }
 
     @PostMapping
@@ -38,19 +38,19 @@ public class ProvidedServiceController {
     @GetMapping("/{serviceId}")
     public ResponseEntity<ProvidedServiceResponse> getProvidedServiceById(@PathVariable UUID serviceId) {
         ProvidedServiceResponse service = providedServiceService.findById(serviceId);
-        return new ResponseEntity<>(service, HttpStatus.OK);
+        return ResponseEntity.ok(service);
     }
 
     @PutMapping("/{serviceId}")
     public ResponseEntity<ProvidedServiceResponse> updateProvidedService(@PathVariable UUID serviceId, @RequestBody ProvidedServiceRequest providedServiceRequest) {
         ProvidedServiceResponse updatedService = providedServiceService.updateProvidedService(serviceId, providedServiceRequest);
-        return new ResponseEntity<>(updatedService, HttpStatus.OK);
+        return ResponseEntity.ok(updatedService);
     }
 
     @DeleteMapping("/{serviceId}")
     public ResponseEntity<Void> deleteProvidedService(@PathVariable UUID serviceId) {
         providedServiceService.deleteById(serviceId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
 }

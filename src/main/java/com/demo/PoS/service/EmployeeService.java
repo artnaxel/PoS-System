@@ -2,10 +2,11 @@ package com.demo.PoS.service;
 
 import com.demo.PoS.dto.employee.EmployeeRequest;
 import com.demo.PoS.dto.employee.EmployeeResponse;
+import com.demo.PoS.mappers.EmployeeMapper;
 import com.demo.PoS.model.entity.Employee;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.repository.EmployeeRepository;
-import com.demo.PoS.repository.ProvidedServiceRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,26 +14,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    private final ProvidedServiceRepository providedServiceRepository;
-
-    public EmployeeService(EmployeeRepository employeeRepository, ProvidedServiceRepository providedServiceRepository) {
-        this.employeeRepository = employeeRepository;
-        this.providedServiceRepository = providedServiceRepository;
-    }
+    private final EmployeeMapper employeeMapper;
 
     public List<EmployeeResponse> findAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
 
         return employees.stream().map(employee ->
-                EmployeeResponse.builder()
-                        .id(employee.getId())
-                        .name(employee.getName())
-                        .surname(employee.getSurname())
-                        .build()
+                employeeMapper.toEmployeeResponse(employee)
         ).collect(Collectors.toList());
     }
 
@@ -45,11 +38,7 @@ public class EmployeeService {
 
         employeeRepository.save(employee);
 
-        return EmployeeResponse.builder()
-                .id(employee.getId())
-                .name(employee.getName())
-                .surname(employee.getSurname())
-                .build();
+        return employeeMapper.toEmployeeResponse(employee);
     }
 
 
@@ -57,11 +46,7 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new NotFoundException("Employee not found with id: " + employeeId));
 
-        return EmployeeResponse.builder()
-                .id(employee.getId())
-                .name(employee.getName())
-                .surname(employee.getSurname())
-                .build();
+        return employeeMapper.toEmployeeResponse(employee);
     }
 
     @Transactional
@@ -74,11 +59,7 @@ public class EmployeeService {
 
         employeeRepository.save(existingEmployee);
 
-        return EmployeeResponse.builder()
-                .id(existingEmployee.getId())
-                .name(existingEmployee.getName())
-                .surname(existingEmployee.getSurname())
-                .build();
+        return employeeMapper.toEmployeeResponse(existingEmployee);
     }
 
     public void deleteEmployee(UUID employeeId) {

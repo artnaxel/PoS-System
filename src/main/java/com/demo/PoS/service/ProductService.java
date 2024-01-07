@@ -3,10 +3,12 @@ package com.demo.PoS.service;
 import com.demo.PoS.dto.product.ProductRequest;
 import com.demo.PoS.dto.product.ProductResponse;
 import com.demo.PoS.exceptions.NotFoundException;
+import com.demo.PoS.mappers.ProductMapper;
 import com.demo.PoS.model.entity.Discount;
 import com.demo.PoS.model.entity.Product;
 import com.demo.PoS.repository.DiscountRepository;
 import com.demo.PoS.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,15 +18,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final DiscountRepository discountRepository;
-
-    public ProductService(ProductRepository productRepository, DiscountRepository discountRepository) {
-        this.productRepository = productRepository;
-        this.discountRepository = discountRepository;
-    }
+    private final ProductMapper productMapper;
 
     public List<ProductResponse> findAll() {
         List<Product> products = productRepository.findAll();
@@ -51,27 +50,13 @@ public class ProductService {
 
         productRepository.save(product);
 
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .stock(product.getStock())
-                .discountId(null)
-                .build();
+        return productMapper.toProductResponse(product);
     }
 
     public ProductResponse findById(UUID productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .stock(product.getStock())
-                .discountId(null)
-                .build();
+        return productMapper.toProductResponse(product);
     }
 
     @Transactional
@@ -93,13 +78,7 @@ public class ProductService {
 
         productRepository.save(product);
 
-        return ProductResponse.builder()
-                .name(product.getName())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .stock(product.getStock())
-                .discountId(Optional.ofNullable(product.getDiscount()).map(Discount::getId).orElse(null))
-                .build();
+        return productMapper.toProductResponse(product);
     }
 
 
@@ -116,13 +95,6 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
 
         product.setStock(newStock);
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .stock(product.getStock())
-                .discountId(null)
-                .build();
+        return productMapper.toProductResponse(product);
     }
 }
