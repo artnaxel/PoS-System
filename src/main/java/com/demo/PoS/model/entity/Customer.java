@@ -10,5 +10,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class Customer extends User {
-
+    @Builder.Default
+    private PosTimestamps timestamps = new PosTimestamps();
 }
