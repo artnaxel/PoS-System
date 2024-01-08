@@ -1,0 +1,43 @@
+<h1>Receipt</h1>
+<span>Order: <span th:text="${order.id}"></span></span>
+<h2>Ordered Products</h2>
+<table>
+    <tr>
+        <th>Product</th>
+        <th>Count</th>
+        <th>Unit Price</th>
+        <th>Discount</th>
+        <th>Total Price</th>
+    </tr>
+    <tr
+            th:each="product : ${order.products}"
+    >
+        <td th:text="${product.name}"></td>
+        <td th:text="${product.count}"></td>
+        <td th:text="${product.price}"></td>
+        <td th:text="${product.discount} ?: '-'"></td>
+        <td th:text="${product.totalPrice}"></td>
+    </tr>
+</table>
+<br />
+<h2>Ordered Services</h2>
+<table>
+    <tr>
+        <th>Service</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Price</th>
+        <th>Discount</th>
+        <th>Total Price</th>
+    </tr>
+    <tr
+            th:each="service : ${order.services}"
+    >
+        <td th:text="${service.name}"></td>
+        <td th:text="${service.startTime}"></td>
+        <td th:text="${service.endTime}"></td>
+        <td th:text="${service.price}"></td>
+        <td th:text="${service.discount} ?: '-'"></td>
+        <td th:text="${service.totalPrice}"></td>
+    </tr>
+</table>

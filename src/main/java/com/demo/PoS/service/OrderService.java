@@ -18,13 +18,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +30,7 @@ public class OrderService {
     private final ReceiptRepository receiptRepository;
     private final CustomerRepository customerRepository;
     private final OrderProductRepository orderProductRepository;
+    private final ReceiptMapper receiptMapper;
 
     @Transactional
     public List<Order> findAllOrders() {
@@ -110,55 +108,9 @@ public class OrderService {
             return ReceiptMapper.toDto(order.getReceipt());
         }
 
-        String template = """
-                Receipt for Order [%s]
-                Product Costs   %s EUR
-                Service Costs   %s EUR
-                Discounts       %s EUR
-                -----------------------
-                Total           %s EUR
-                """;
-
-        Function<OrderProduct, BigDecimal> orderProductCost = (OrderProduct orderProduct) ->
-                orderProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(orderProduct.getCount()));
-
-        BigDecimal productCosts = Optional.of(order.getOrderProducts().stream()
-                        .map(orderProductCost)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add))
-                .orElse(BigDecimal.ZERO);
-
-        BigDecimal serviceCosts = Optional.of(getServices(order).stream()
-                        .map(Item::getPrice)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add))
-                .orElse(BigDecimal.ZERO);
-
-        BigDecimal discounts = order.getOrderProducts().stream()
-                .map(it -> Optional.ofNullable(it.getProduct().getDiscount())
-                        .orElse(Discount.builder().discountRate(BigDecimal.ZERO).build())
-                        .getDiscountRate()
-                        .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP)
-                        .multiply(orderProductCost.apply(it)))
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .add(getServices(order).stream()
-                        .map(it -> Optional.ofNullable(it.getDiscount())
-                                .orElse(Discount.builder().discountRate(BigDecimal.ZERO).build())
-                                .getDiscountRate()
-                                .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP)
-                                .multiply(it.getPrice()))
-                        .reduce(BigDecimal.ZERO, BigDecimal::add)
-                );
-
         Receipt receipt = Receipt.builder()
                 .order(order)
-                .text(String.format(template,
-                        order.getId(),
-                        productCosts,
-                        serviceCosts,
-                        discounts,
-                        productCosts
-                                .add(serviceCosts)
-                                .subtract(discounts)
-                ))
+                .text(receiptMapper.mapOrderToReceipt(order))
                 .build();
         order.setOrderStatus(OrderStatus.COMPLETED); // should have separate method for completing the order
         orderRepository.save(order);
