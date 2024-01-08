@@ -7,11 +7,10 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @Entity
 @SuperBuilder
 @Table(name = "Payments")
@@ -32,7 +31,7 @@ public class Payment {
     private PaymentMethod paymentMethod;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date paymentDateTime;
+    private LocalDateTime paymentDateTime;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
@@ -41,6 +40,6 @@ public class Payment {
     private BigDecimal refundAmount;
 
     @Column(nullable = true)
-    private Date refundDate;
+    private LocalDateTime refundDate;
 
 }

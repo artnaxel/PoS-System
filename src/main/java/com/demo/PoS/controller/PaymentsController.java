@@ -1,35 +1,36 @@
 package com.demo.PoS.controller;
 
-import com.demo.PoS.dto.PaymentDto;
+import com.demo.PoS.dto.payment.PaymentRequest;
 import com.demo.PoS.model.entity.Payment;
 import com.demo.PoS.service.PaymentService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/payments")
+@RequiredArgsConstructor
 public class PaymentsController {
+
     private final PaymentService paymentService;
 
-    public PaymentsController(PaymentService paymentService) {
-        this.paymentService = paymentService;
-    }
-
     @PostMapping
-    ResponseEntity<Payment> createPayment(@RequestBody PaymentDto paymentDto) {
-        System.out.println("The value of number is: ");
-        Payment savedPayment = paymentService.createPayment(paymentDto);
-        return new ResponseEntity<>(savedPayment, HttpStatus.CREATED);
+    ResponseEntity<Payment> createPayment(@Valid @RequestBody PaymentRequest paymentRequest) {
+        Payment savedPayment = paymentService.createPayment(paymentRequest);
+        return ResponseEntity.ok(savedPayment);
     }
 
     @GetMapping
     public ResponseEntity<List<Payment>> getAllPayments() {
-        List<Payment> payments = paymentService.findAllPayemtns();
-        return new ResponseEntity<>(payments, HttpStatus.OK);
+        List<Payment> payments = paymentService.findAllPayments();
+        return ResponseEntity.ok(payments);
     }
 
     @DeleteMapping("/{paymentId}")
@@ -41,13 +42,13 @@ public class PaymentsController {
     @GetMapping("/{paymentId}")
     public ResponseEntity<Payment> getPaymentById(@PathVariable UUID paymentId) {
         Payment payment = paymentService.findPaymentById(paymentId);
-        return new ResponseEntity<>(payment, HttpStatus.OK);
+        return ResponseEntity.ok(payment);
     }
 
     @PutMapping("/{paymentId}")
-    public ResponseEntity<Payment> updatePaymentData(@PathVariable UUID paymentId, @RequestBody PaymentDto paymentDetails) {
-        Payment updatedPayment = paymentService.updatePayment(paymentId, paymentDetails);
-        return new ResponseEntity<>(updatedPayment, HttpStatus.OK);
+    public ResponseEntity<Payment> updatePaymentData(@PathVariable UUID paymentId, @Valid @RequestBody PaymentRequest paymentRequest) {
+        Payment updatedPayment = paymentService.updatePayment(paymentId, paymentRequest);
+        return ResponseEntity.ok(updatedPayment);
     }
 
 }

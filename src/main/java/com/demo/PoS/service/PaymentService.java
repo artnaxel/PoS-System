@@ -1,44 +1,41 @@
 package com.demo.PoS.service;
 
-import com.demo.PoS.dto.PaymentDto;
+import com.demo.PoS.dto.payment.PaymentRequest;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.model.entity.*;
 import com.demo.PoS.repository.OrderRepository;
 import com.demo.PoS.repository.PaymentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Service
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
-    public PaymentService(PaymentRepository paymentRepository, OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
-        this.paymentRepository = paymentRepository;
-    }
 
     @Transactional
-    public Payment createPayment(PaymentDto paymentDto) {
-        //Leaving it commented for easier testing reasons - uncomment before pushing to prod
-        //Order can not be created because missing customer id. Customer is not initialized
-//        Order order = orderRepository.findById(paymentDto.orderId()).orElseThrow();
+    public Payment createPayment(PaymentRequest paymentRequest) {
+
+        Order order = orderRepository.findById(paymentRequest.getOrderId()).orElseThrow();
         Payment payment = Payment.builder()
-//                .order(order)
-                .amount(paymentDto.amount())
-                .paymentMethod(paymentDto.paymentMethod())
-                .paymentDateTime(new Date())
-                .paymentStatus(paymentDto.paymentStatus())
+                .order(order)
+                .amount(paymentRequest.getAmount())
+                .paymentMethod(paymentRequest.getPaymentMethod())
+                .paymentDateTime(LocalDateTime.now())
+                .paymentStatus(paymentRequest.getPaymentStatus())
                 .build();
         return paymentRepository.save(payment);
     }
 
-    public List<Payment> findAllPayemtns() {
+    public List<Payment> findAllPayments() {
         return paymentRepository.findAll();
     }
 
@@ -55,15 +52,15 @@ public class PaymentService {
     }
 
     @Transactional
-    public Payment updatePayment(UUID paymentId, PaymentDto paymentDetails) {
+    public Payment updatePayment(UUID paymentId, PaymentRequest paymentDetails) {
         Payment updatedPayment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + paymentId));
 
-        updatedPayment.setAmount(paymentDetails.amount());
-        updatedPayment.setPaymentMethod(paymentDetails.paymentMethod());
-        updatedPayment.setPaymentStatus(paymentDetails.paymentStatus());
-        updatedPayment.setRefundAmount(paymentDetails.refundAmount());
-        updatedPayment.setRefundDate(paymentDetails.refundDate());
+        updatedPayment.setAmount(paymentDetails.getAmount());
+        updatedPayment.setPaymentMethod(paymentDetails.getPaymentMethod());
+        updatedPayment.setPaymentStatus(paymentDetails.getPaymentStatus());
+        updatedPayment.setRefundAmount(paymentDetails.getRefundAmount());
+        updatedPayment.setRefundDate(paymentDetails.getRefundDate());
 
         return paymentRepository.save(updatedPayment);
     }
