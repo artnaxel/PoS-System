@@ -1,6 +1,5 @@
 package com.demo.PoS.controller;
 
-import com.demo.PoS.dto.discount.DiscountResponse;
 import com.demo.PoS.dto.loyaltyProgram.LoyaltyProgramRequest;
 import com.demo.PoS.dto.loyaltyProgram.LoyaltyProgramResponse;
 import com.demo.PoS.service.LoyaltyProgramService;
