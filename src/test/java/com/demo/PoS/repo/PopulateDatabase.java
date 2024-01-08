@@ -100,7 +100,6 @@ public class PopulateDatabase {
     void populateOrders() {
         Order order = Order.builder()
                 .customer(customerRepository.findAll().getFirst())
-                .employee(employeeRepository.findAll().getFirst())
                 .orderStatus(OrderStatus.CREATED)
                 .build();
         orderRepository.save(order);

@@ -12,9 +12,27 @@ import java.util.UUID;
 public interface OrderRepository extends JpaRepository<Order, UUID> {
     @Query("""
             select o from Order o
-            join fetch o.orderProducts op
-            join fetch op.product
-            where o.id = :orderId""")
-    Optional<Order> findOrderWithProductsById(UUID orderId);
+            left join fetch o.orderProducts op
+            left join fetch op.product
+            left join fetch o.reservations r
+            left join fetch r.serviceSlot ss
+            left join fetch ss.providedService
+            where o.id = :orderId
+            """)
+    Optional<Order> findOrderWithProductsAndServicesById(UUID orderId);
+
+    @Query("""
+            select o from Order o
+            left join fetch o.orderProducts op
+            left join fetch op.product p
+            left join fetch p.discount
+            left join fetch o.reservations r
+            left join fetch r.serviceSlot ss
+            left join fetch ss.providedService ps
+            left join fetch ps.discount
+            where o.id = :orderId
+            """)
+    Optional<Order> findOrderWithProductsAndServicesAndDiscountsById(UUID orderId);
+
 
 }

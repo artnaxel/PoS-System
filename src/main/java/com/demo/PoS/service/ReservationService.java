@@ -5,22 +5,18 @@ import com.demo.PoS.dto.reservation.ReservationResponseDto;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.mappers.ReservationMapper;
 import com.demo.PoS.model.entity.Order;
-import com.demo.PoS.model.entity.ProvidedService;
 import com.demo.PoS.model.entity.Reservation;
 import com.demo.PoS.model.entity.ServiceSlot;
 import com.demo.PoS.model.enums.ServiceSlotStatus;
-import com.demo.PoS.repository.ProvidedServiceRepository;
+import com.demo.PoS.repository.OrderRepository;
 import com.demo.PoS.repository.ReservationRepository;
 import com.demo.PoS.repository.ServiceSlotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,10 +27,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReservationService {
     private final ReservationRepository reservationRepository;
-    private final ReservationMapper reservationMapper;
     private final OrderService orderService;
     private final ServiceSlotService serviceSlotService;
     private final ServiceSlotRepository serviceSlotRepository;
+    private final OrderRepository orderRepository;
 
     public List<Reservation> findReservations() {
         return reservationRepository.findAll();
@@ -47,12 +43,12 @@ public class ReservationService {
 
     public List<ReservationResponseDto> getReservations() {
         return findReservations().stream()
-                .map(reservationMapper::toDto)
+                .map(ReservationMapper::toDto)
                 .toList();
     }
 
     public ReservationResponseDto getReservation(UUID reservationId) {
-        return reservationMapper.toDto(findReservationById(reservationId));
+        return ReservationMapper.toDto(findReservationById(reservationId));
     }
 
     @Transactional
@@ -71,8 +67,9 @@ public class ReservationService {
                 .order(order)
                 .description(reservationRequestDto.description())
                 .build();
+
         reservationRepository.save(reservation);
-        return reservationMapper.toDto(reservation);
+        return ReservationMapper.toDto(reservation);
     }
 
     @Transactional

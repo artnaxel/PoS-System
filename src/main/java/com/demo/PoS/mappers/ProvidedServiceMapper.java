@@ -3,11 +3,9 @@ package com.demo.PoS.mappers;
 import com.demo.PoS.dto.providedService.ProvidedServiceResponse;
 import com.demo.PoS.model.entity.Discount;
 import com.demo.PoS.model.entity.ProvidedService;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Component
 public class ProvidedServiceMapper {
     public static ProvidedServiceResponse toProvidedServiceResponse(ProvidedService providedService) {
         return ProvidedServiceResponse.builder()

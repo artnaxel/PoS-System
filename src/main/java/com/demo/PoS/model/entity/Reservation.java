@@ -19,7 +19,7 @@ public class Reservation {
     @GeneratedValue
     private UUID id;
 
-    @OneToOne
+    @ManyToOne
     private Order order;
 
     @OneToOne
