@@ -1,7 +1,7 @@
 package com.demo.PoS.controller;
 
-import com.demo.PoS.dto.ProvidedServiceDetails;
-import com.demo.PoS.model.entity.ProvidedService;
+import com.demo.PoS.dto.providedService.ProvidedServiceRequest;
+import com.demo.PoS.dto.providedService.ProvidedServiceResponse;
 import com.demo.PoS.service.ProvidedServiceService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -24,33 +24,33 @@ public class ProvidedServiceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProvidedService>> getAllProvidedServices() {
-        List<ProvidedService> services = providedServiceService.findAll();
-        return new ResponseEntity<>(services, HttpStatus.OK);
+    public ResponseEntity<List<ProvidedServiceResponse>> getAllProvidedServices() {
+        List<ProvidedServiceResponse> services = providedServiceService.getAllProvidedServices();
+        return ResponseEntity.ok(services);
     }
 
     @PostMapping
-    public ResponseEntity<ProvidedService> createProvidedService(@Valid @RequestBody ProvidedServiceDetails providedServiceDetails) {
-        ProvidedService newService = providedServiceService.createProvidedService(providedServiceDetails);
-        return new ResponseEntity<>(newService, HttpStatus.CREATED);
+    public ResponseEntity<ProvidedServiceResponse> createProvidedService(@RequestBody @Valid ProvidedServiceRequest providedServiceRequest) {
+        ProvidedServiceResponse createdService = providedServiceService.createProvidedService(providedServiceRequest);
+        return new ResponseEntity<>(createdService, HttpStatus.CREATED);
     }
 
     @GetMapping("/{serviceId}")
-    public ResponseEntity<ProvidedService> getProvidedServiceById(@PathVariable UUID serviceId) {
-        ProvidedService service = providedServiceService.findById(serviceId);
-        return new ResponseEntity<>(service, HttpStatus.OK);
+    public ResponseEntity<ProvidedServiceResponse> getProvidedServiceById(@PathVariable UUID serviceId) {
+        ProvidedServiceResponse service = providedServiceService.findById(serviceId);
+        return ResponseEntity.ok(service);
     }
 
     @PutMapping("/{serviceId}")
-    public ResponseEntity<ProvidedService> updateProvidedService(@PathVariable UUID serviceId, @RequestBody ProvidedServiceDetails providedServiceDetails) {
-        ProvidedService updatedService = providedServiceService.updateProvidedService(serviceId, providedServiceDetails);
-        return new ResponseEntity<>(updatedService, HttpStatus.OK);
+    public ResponseEntity<ProvidedServiceResponse> updateProvidedService(@PathVariable UUID serviceId, @RequestBody @Valid ProvidedServiceRequest providedServiceRequest) {
+        ProvidedServiceResponse updatedService = providedServiceService.updateProvidedService(serviceId, providedServiceRequest);
+        return ResponseEntity.ok(updatedService);
     }
 
     @DeleteMapping("/{serviceId}")
     public ResponseEntity<Void> deleteProvidedService(@PathVariable UUID serviceId) {
         providedServiceService.deleteById(serviceId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
 }

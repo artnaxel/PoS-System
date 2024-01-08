@@ -1,7 +1,5 @@
 package com.demo.PoS.model.entity;
 
-import com.demo.PoS.dto.OrderDiscountDto;
-import com.demo.PoS.dto.OrderDto;
 import com.demo.PoS.model.enums.DiscountType;
 import com.demo.PoS.model.enums.OrderStatus;
 import com.demo.PoS.model.relationship.OrderProduct;
@@ -21,14 +19,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
-    public OrderProduct addProduct(Product product, int count) {
-        OrderProduct op = new OrderProduct();
-        op.setOrder(this);
-        op.setProduct(product);
-        op.setCount(count);
-        return op;
-    }
-
     @Id
     @GeneratedValue
     private UUID id;
@@ -44,7 +34,6 @@ public class Order {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<OrderProduct> orderProducts;
 
-    @Enumerated(EnumType.STRING)
     private DiscountType discountType;
 
     private BigDecimal discountAmount;
@@ -54,27 +43,10 @@ public class Order {
     @OneToOne(mappedBy = "order")
     private Receipt receipt;
 
-    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @Embedded
     @Builder.Default
     private PosTimestamps timestamps = new PosTimestamps();
 
-    public OrderDto toOrderDto() {
-        return new OrderDto(this.id,
-                this.customer.getId(),
-                this.employee.getId(),
-                this.getOrderProducts().stream().map(OrderProduct::toDto).toList(),
-                this.tippingAmount,
-                this.orderStatus);
-    }
-
-    public OrderDiscountDto toOrderDiscountDto() {
-        return new OrderDiscountDto(
-                this.id,
-                this.discountType,
-                this.discountAmount
-        );
-    }
 }

@@ -1,14 +1,13 @@
 package com.demo.PoS.controller;
 
-import com.demo.PoS.dto.OrderDiscountDto;
-import com.demo.PoS.dto.OrderDto;
-import com.demo.PoS.dto.ReceiptDto;
+import com.demo.PoS.dto.order.OrderDiscountDto;
+import com.demo.PoS.dto.order.OrderDto;
+import com.demo.PoS.dto.receipt.ReceiptDto;
 import com.demo.PoS.model.entity.Order;
 import com.demo.PoS.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,28 +26,28 @@ public class OrdersController {
     @GetMapping
     ResponseEntity<List<OrderDto>> listOrders() {
         return ResponseEntity.ok(
-                orderService.findAllOrders().stream().map(Order::toOrderDto).toList());
+                orderService.getAllOrders());
     }
 
     @GetMapping("/{orderId}")
     ResponseEntity<OrderDto> getOrder(@PathVariable UUID orderId) {
-        return ResponseEntity.ok(orderService.findOrder(orderId).toOrderDto());
+        return ResponseEntity.ok(orderService.getOrder(orderId));
     }
 
     @GetMapping("/{orderId}/discount")
     ResponseEntity<OrderDiscountDto> getOrderDiscount(@PathVariable UUID orderId) {
-        return ResponseEntity.ok(orderService.findOrder(orderId).toOrderDiscountDto());
+        return ResponseEntity.ok(orderService.getOrderDiscount(orderId));
     }
 
     @GetMapping("/{orderId}/receipt")
     ResponseEntity<ReceiptDto> getOrderReceipt(@PathVariable UUID orderId) {
-        return ResponseEntity.ok(orderService.generateReceipt(orderId).toReceiptDto());
+        return ResponseEntity.ok(orderService.generateReceipt(orderId));
     }
 
     @PostMapping
-    ResponseEntity<Void> createOrder(@RequestBody OrderDto orderDto) {
-        orderService.createOrder(orderDto);
-        return ResponseEntity.noContent().build();
+    ResponseEntity<UUID> createOrder(@RequestBody OrderDto orderDto) {
+        Order order = orderService.createOrder(orderDto);
+        return ResponseEntity.ok(order.getId());
     }
 
     @PutMapping("/{orderId}")
@@ -63,8 +62,4 @@ public class OrdersController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/test")
-    ResponseEntity<Void> testing() {
-        throw new RuntimeException("Testing");
-    }
 }

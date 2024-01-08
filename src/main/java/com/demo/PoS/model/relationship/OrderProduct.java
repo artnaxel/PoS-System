@@ -1,11 +1,10 @@
 package com.demo.PoS.model.relationship;
 
-import com.demo.PoS.dto.OrderProductDto;
+import com.demo.PoS.dto.order.OrderProductDto;
 import com.demo.PoS.model.entity.Order;
 import com.demo.PoS.model.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Mutability;
 
 import java.util.UUID;
 @Data

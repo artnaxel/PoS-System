@@ -1,17 +1,19 @@
 package com.demo.PoS.controller;
 
-import com.demo.PoS.dto.EmployeeDetails;
-import com.demo.PoS.model.entity.Employee;
+import com.demo.PoS.dto.employee.EmployeeRequest;
+import com.demo.PoS.dto.employee.EmployeeResponse;
 import com.demo.PoS.service.EmployeeService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
@@ -23,32 +25,32 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Employee>> getAllEmployees() {
-        List<Employee> employees = employeeService.findAllEmployees();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+    public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
+        List<EmployeeResponse> employees = employeeService.findAllEmployees();
+        return ResponseEntity.ok(employees);
     }
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@Valid @RequestBody EmployeeDetails employeeDetails) {
-        Employee createdEmployee = employeeService.createEmployee(employeeDetails);
+    public ResponseEntity<EmployeeResponse> createEmployee(@RequestBody @Valid EmployeeRequest employeeRequest) {
+        EmployeeResponse createdEmployee = employeeService.createEmployee(employeeRequest);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
 
     @GetMapping("/{employeeId}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable UUID employeeId) {
-        Employee employee = employeeService.findEmployeeById(employeeId);
-        return new ResponseEntity<>(employee, HttpStatus.OK);
+    public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable UUID employeeId) {
+        EmployeeResponse employee = employeeService.findEmployeeById(employeeId);
+        return ResponseEntity.ok(employee);
     }
 
     @PutMapping("/{employeeId}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable UUID employeeId, @Valid @RequestBody EmployeeDetails employeeDetails) {
-        Employee updatedEmployee = employeeService.updateEmployee(employeeId, employeeDetails);
-        return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
+    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeRequest employeeRequest) {
+        EmployeeResponse updatedEmployee = employeeService.updateEmployee(employeeId, employeeRequest);
+        return ResponseEntity.ok(updatedEmployee);
     }
 
     @DeleteMapping("/{employeeId}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable UUID employeeId) {
         employeeService.deleteEmployee(employeeId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }
