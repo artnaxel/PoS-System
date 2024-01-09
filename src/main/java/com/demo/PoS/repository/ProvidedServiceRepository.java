@@ -9,4 +9,6 @@ import java.util.UUID;
 
 public interface ProvidedServiceRepository extends JpaRepository<ProvidedService, UUID> {
     List<ProvidedService> findByLoyaltyProgram(LoyaltyProgram loyaltyProgram);
+
+    List<ProvidedService> findByDiscount_Id(UUID discountId);
 }

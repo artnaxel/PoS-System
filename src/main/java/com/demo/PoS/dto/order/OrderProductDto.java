@@ -4,5 +4,10 @@ import java.util.UUID;
 
 public record OrderProductDto(
    UUID productId,
+
+   UUID discountId,
+
+   UUID loyaltyProgramId,
+
    Integer count
 ) {}

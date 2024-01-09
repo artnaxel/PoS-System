@@ -5,7 +5,11 @@ import com.demo.PoS.dto.discount.DiscountResponse;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.mappers.DiscountMapper;
 import com.demo.PoS.model.entity.Discount;
+import com.demo.PoS.model.entity.Product;
+import com.demo.PoS.model.entity.ProvidedService;
 import com.demo.PoS.repository.DiscountRepository;
+import com.demo.PoS.repository.ProductRepository;
+import com.demo.PoS.repository.ProvidedServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,10 @@ import java.util.stream.Collectors;
 public class DiscountService {
 
     private final DiscountRepository discountRepository;
+
+    private final ProductRepository productRepository;
+
+    private final ProvidedServiceRepository providedServiceRepository;
 
     public DiscountResponse createDiscount(DiscountRequest discountRequest) {
         Discount discount = Discount.builder()
@@ -63,6 +71,18 @@ public class DiscountService {
     }
 
     public void deleteDiscount(UUID id) {
+        List<Product> productsWithDiscount = productRepository.findByDiscount_Id(id);
+        for (Product product : productsWithDiscount) {
+            product.setDiscount(null);
+            productRepository.save(product);
+        }
+
+        List<ProvidedService> providedServiceWithDiscount = providedServiceRepository.findByDiscount_Id(id);
+        for (ProvidedService service : providedServiceWithDiscount) {
+            service.setDiscount(null);
+            providedServiceRepository.save(service);
+        }
+
         discountRepository.deleteById(id);
     }
 }
