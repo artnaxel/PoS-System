@@ -1,7 +1,9 @@
 package com.demo.PoS.service;
 
 import com.demo.PoS.dto.payment.PaymentRequest;
+import com.demo.PoS.dto.payment.PaymentResponse;
 import com.demo.PoS.exceptions.NotFoundException;
+import com.demo.PoS.mappers.PaymentMapper;
 import com.demo.PoS.model.entity.*;
 import com.demo.PoS.repository.OrderRepository;
 import com.demo.PoS.repository.PaymentRepository;
@@ -22,7 +24,7 @@ public class PaymentService {
 
 
     @Transactional
-    public Payment createPayment(PaymentRequest paymentRequest) {
+    public PaymentResponse createPayment(PaymentRequest paymentRequest) {
 
         Order order = orderRepository.findById(paymentRequest.getOrderId()).orElseThrow();
         Payment payment = Payment.builder()
@@ -32,11 +34,12 @@ public class PaymentService {
                 .paymentDateTime(LocalDateTime.now())
                 .paymentStatus(paymentRequest.getPaymentStatus())
                 .build();
-        return paymentRepository.save(payment);
+        return PaymentMapper.toPaymentResponse(paymentRepository.save(payment));
     }
 
-    public List<Payment> findAllPayments() {
-        return paymentRepository.findAll();
+    public List<PaymentResponse> findAllPayments() {
+        List<Payment> payments = paymentRepository.findAll();
+        return payments.stream().map(PaymentMapper::toPaymentResponse).toList();
     }
 
     public void deletePayment(UUID paymentId) {
@@ -46,13 +49,14 @@ public class PaymentService {
         paymentRepository.deleteById(paymentId);
     }
 
-    public Payment findPaymentById(UUID paymentId) {
-        return paymentRepository.findById(paymentId)
+    public PaymentResponse findPaymentById(UUID paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new NotFoundException("Payment not found with id: " + paymentId));
+        return PaymentMapper.toPaymentResponse(payment);
     }
 
     @Transactional
-    public Payment updatePayment(UUID paymentId, PaymentRequest paymentDetails) {
+    public PaymentResponse updatePayment(UUID paymentId, PaymentRequest paymentDetails) {
         Payment updatedPayment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + paymentId));
 
@@ -62,6 +66,8 @@ public class PaymentService {
         updatedPayment.setRefundAmount(paymentDetails.getRefundAmount());
         updatedPayment.setRefundDate(paymentDetails.getRefundDate());
 
-        return paymentRepository.save(updatedPayment);
+        paymentRepository.save(updatedPayment);
+
+        return PaymentMapper.toPaymentResponse(updatedPayment);
     }
 }
