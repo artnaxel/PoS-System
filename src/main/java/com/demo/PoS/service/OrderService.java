@@ -56,7 +56,7 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(OrderDto orderDto) {
-        Customer customer = customerRepository.findById(dto.customerId())
+        Customer customer = customerRepository.findById(orderDto.customerId())
                 .orElseThrow(() -> new NotFoundException("Customer not found"));
         Order order = Order.builder()
                 .orderStatus(OrderStatus.CREATED)
@@ -75,8 +75,8 @@ public class OrderService {
 
         Order order = orderRepository.findOrderWithProductsAndServicesById(id)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
-        Customer customer = dto.customerId() == null ? order.getCustomer() : customerRepository
-                .findById(dto.customerId())
+        Customer customer = orderDto.customerId() == null ? order.getCustomer() : customerRepository
+                .findById(orderDto.customerId())
                 .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         for (OrderProductDto updatedProduct : Optional.ofNullable(orderDto.orderProducts())
@@ -96,8 +96,8 @@ public class OrderService {
 
         Order updatedOrder = order.toBuilder()
                 .customer(customer)
-                .tippingAmount(dto.tippingAmount())
-                .orderStatus(dto.status())
+                .tippingAmount(orderDto.tippingAmount())
+                .orderStatus(orderDto.status())
                 .build();
 
         orderRepository.save(updatedOrder);
@@ -150,9 +150,4 @@ public class OrderService {
         return orderProduct;
     }
 
-    private List<ProvidedService> getServices(Order order) {
-        return order.getReservations().stream()
-                .map(it -> it.getServiceSlot().getProvidedService())
-                .toList();
-    }
 }
