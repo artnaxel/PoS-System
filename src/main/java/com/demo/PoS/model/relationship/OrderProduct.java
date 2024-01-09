@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Data
@@ -34,18 +35,11 @@ public class OrderProduct {
 
     private Integer count = 1;
 
-    public OrderProductDto toDto() {
-        return new OrderProductDto(
-                this.product.getId(),
-                this.count
-        );
-    }
-
     @Embeddable
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class OrderProductKey {
+    public static class OrderProductKey implements Serializable {
         @Column(name = "order_id")
         private UUID orderId;
 

@@ -29,6 +29,12 @@ public class ServiceSlotController {
         return new ResponseEntity<>(serviceSlot, HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ServiceSlotResponse>> getAllServiceSlots() {
+        List<ServiceSlotResponse> serviceSlots = serviceSlotService.getAllServiceSlots();
+        return ResponseEntity.ok(serviceSlots);
+    }
+
     @GetMapping("/service/{serviceId}")
     public ResponseEntity<List<ServiceSlotResponse>> getAvailableSlotsByService(@PathVariable UUID serviceId) {
         List<ServiceSlotResponse> slots = serviceSlotService.getAvailableSlotsByService(serviceId);
