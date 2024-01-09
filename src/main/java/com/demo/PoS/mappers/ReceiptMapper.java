@@ -88,8 +88,9 @@ public class ReceiptMapper {
                         ? Optional.ofNullable(order.getDiscountAmount())
                         .orElse(BigDecimal.ZERO)
                         : totalOrderPrice.multiply(Optional.ofNullable(order.getDiscountAmount())
-                        .orElse(BigDecimal.ZERO)))
-                .multiply(BigDecimal.valueOf(0.21))
+                        .orElse(BigDecimal.ZERO)));
+        totalOrderPrice = totalOrderPrice
+                .add(totalOrderPrice.multiply(BigDecimal.valueOf(0.21)))
                 .add(Optional.ofNullable(order.getTippingAmount())
                         .orElse(BigDecimal.ZERO));
 
