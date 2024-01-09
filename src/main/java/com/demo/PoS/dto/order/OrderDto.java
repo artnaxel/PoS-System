@@ -1,5 +1,6 @@
 package com.demo.PoS.dto.order;
 
+import com.demo.PoS.dto.providedService.ProvidedServiceResponse;
 import com.demo.PoS.model.enums.OrderStatus;
 import lombok.Builder;
 
@@ -8,11 +9,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Builder
-public record OrderDto (
+public record OrderDto(
         UUID id,
         UUID customerId,
-        UUID employeeId,
         List<OrderProductDto> orderProducts,
+        List<ProvidedServiceResponse> services,
         BigDecimal tippingAmount,
         OrderStatus status
-){}
+) {
+}

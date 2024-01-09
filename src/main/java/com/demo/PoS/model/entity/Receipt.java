@@ -17,6 +17,7 @@ public class Receipt {
     @Id
     private UUID id;
 
+    @Lob
     private String text;
 
     @OneToOne

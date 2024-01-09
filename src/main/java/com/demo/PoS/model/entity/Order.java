@@ -27,12 +27,11 @@ public class Order {
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Customer customer;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "id")
-    private Employee employee;
-
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<OrderProduct> orderProducts;
+
+    @OneToMany(mappedBy = "order")
+    private Set<Reservation> reservations;
 
     private DiscountType discountType;
 

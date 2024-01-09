@@ -1,13 +1,12 @@
 package com.demo.PoS.repo;
 
-import com.demo.PoS.model.entity.Customer;
-import com.demo.PoS.model.entity.Employee;
-import com.demo.PoS.model.entity.Order;
-import com.demo.PoS.model.entity.Product;
+import com.demo.PoS.model.entity.*;
 import com.demo.PoS.model.enums.OrderStatus;
+import com.demo.PoS.model.enums.ServiceSlotStatus;
 import com.demo.PoS.repository.*;
 import com.demo.PoS.repository.relations.OrderProductRepository;
 import com.demo.PoS.service.OrderService;
+import com.demo.PoS.service.ServiceSlotService;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -17,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -33,9 +35,14 @@ public class PopulateDatabase {
     private CustomerRepository customerRepository;
     @Autowired
     private ReceiptRepository receiptRepository;
-
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private ReservationRepository reservationRepository;
+    @Autowired
+    private ProvidedServiceRepository providedServiceRepository;
+    @Autowired
+    private ServiceSlotRepository serviceSlotRepository;
 
     private final Faker faker = new Faker();
 
@@ -47,8 +54,12 @@ public class PopulateDatabase {
     @Test
     @org.junit.jupiter.api.Order(0)
     void cleanDb() {
+        reservationRepository.deleteAll();
         receiptRepository.deleteAll();
         orderProductRepository.deleteAll();
+        reservationRepository.deleteAll();
+        serviceSlotRepository.deleteAll();
+        providedServiceRepository.deleteAll();
         orderRepository.deleteAll();
         productRepository.deleteAll();
         employeeRepository.deleteAll();
@@ -89,7 +100,6 @@ public class PopulateDatabase {
     void populateOrders() {
         Order order = Order.builder()
                 .customer(customerRepository.findAll().getFirst())
-                .employee(employeeRepository.findAll().getFirst())
                 .orderStatus(OrderStatus.CREATED)
                 .build();
         orderRepository.save(order);
@@ -105,5 +115,30 @@ public class PopulateDatabase {
             );
         }
         orderRepository.save(order);
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(50)
+    void populateServices() {
+        ProvidedService service = ProvidedService.builder()
+                .name(faker.verb().ingForm())
+                .description(faker.lorem().maxLengthSentence(255))
+                .price(BigDecimal.valueOf(faker.number().randomDouble(2, 1, 1000)))
+                .build();
+        providedServiceRepository.save(service);
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(60)
+    void populateSlots() {
+        ServiceSlot slot = ServiceSlot.builder()
+                .serviceSlotStatus(ServiceSlotStatus.FREE)
+                .startTime(LocalDateTime.now().withDayOfMonth(20).withHour(14).truncatedTo(ChronoUnit.HOURS))
+                .endTime(LocalDateTime.now().withDayOfMonth(20).withHour(16).truncatedTo(ChronoUnit.HOURS))
+                .providedService(providedServiceRepository.findAll().getFirst())
+                .employee(employeeRepository.findAll().getFirst())
+                .build();
+
+        serviceSlotRepository.save(slot);
     }
 }

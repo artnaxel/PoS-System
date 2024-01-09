@@ -21,7 +21,7 @@ public class ProvidedService extends Item {
 
     @OneToMany(mappedBy = "providedService")
     private Set<ServiceSlot> serviceSlots;
-
+    
     @ManyToOne
     private Discount discount;
 }

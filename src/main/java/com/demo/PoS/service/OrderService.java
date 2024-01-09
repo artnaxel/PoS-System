@@ -11,7 +11,6 @@ import com.demo.PoS.model.entity.*;
 import com.demo.PoS.model.enums.OrderStatus;
 import com.demo.PoS.model.relationship.OrderProduct;
 import com.demo.PoS.repository.CustomerRepository;
-import com.demo.PoS.repository.EmployeeRepository;
 import com.demo.PoS.repository.OrderRepository;
 import com.demo.PoS.repository.ReceiptRepository;
 import com.demo.PoS.repository.relations.OrderProductRepository;
@@ -30,9 +29,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ReceiptRepository receiptRepository;
     private final CustomerRepository customerRepository;
-    private final EmployeeRepository employeeRepository;
     private final OrderProductRepository orderProductRepository;
-    private final OrderMapper orderMapper;
     private final ReceiptMapper receiptMapper;
 
     @Transactional
@@ -41,30 +38,29 @@ public class OrderService {
     }
 
     public Order findOrder(UUID id) {
-        return orderRepository.findById(id).orElseThrow(() -> new NotFoundException("Order not found"));
+        return orderRepository.findOrderWithProductsAndServicesById(id)
+                .orElseThrow(() -> new NotFoundException("Order not found"));
     }
 
     public List<OrderDto> getAllOrders() {
-        return findAllOrders().stream().map(orderMapper::toDto).toList();
+        return findAllOrders().stream().map(OrderMapper::toDto).toList();
     }
+
     public OrderDto getOrder(UUID id) {
-        return orderMapper.toDto(findOrder(id));
+        return OrderMapper.toDto(findOrder(id));
     }
 
     public OrderDiscountDto getOrderDiscount(UUID id) {
-        return orderMapper.toDiscountDto(findOrder(id));
+        return OrderMapper.toDiscountDto(findOrder(id));
     }
 
     @Transactional
     public Order createOrder(OrderDto orderDto) {
-        Customer customer = customerRepository.findById(orderDto.customerId())
+        Customer customer = customerRepository.findById(dto.customerId())
                 .orElseThrow(() -> new NotFoundException("Customer not found"));
-        Employee employee = employeeRepository.findById(orderDto.employeeId())
-                .orElseThrow(() -> new NotFoundException("Employee not found"));
         Order order = Order.builder()
                 .orderStatus(OrderStatus.CREATED)
                 .customer(customer)
-                .employee(employee)
                 .build();
         Order createdOrder = orderRepository.save(order);
         attachProducts(order, orderDto.orderProducts());
@@ -73,14 +69,14 @@ public class OrderService {
 
     @Transactional
     public void editOrder(UUID id, OrderDto orderDto) {
-        if (!id.equals(orderDto.id()))
+        if (!id.equals(orderDto.id())) {
             throw new IllegalArgumentException("Cannot change the ID of an order");
+        }
 
-        Order order = orderRepository.findOrderWithProductsById(id)
+        Order order = orderRepository.findOrderWithProductsAndServicesById(id)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
-        Employee employee = orderDto.employeeId() == null ? order.getEmployee() : employeeRepository.findById(orderDto.employeeId())
-                .orElseThrow(() -> new NotFoundException("Employee not found"));
-        Customer customer = orderDto.customerId() == null ? order.getCustomer() : customerRepository.findById(orderDto.customerId())
+        Customer customer = dto.customerId() == null ? order.getCustomer() : customerRepository
+                .findById(dto.customerId())
                 .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         for (OrderProductDto updatedProduct : Optional.ofNullable(orderDto.orderProducts())
@@ -100,9 +96,8 @@ public class OrderService {
 
         Order updatedOrder = order.toBuilder()
                 .customer(customer)
-                .employee(employee)
-                .tippingAmount(orderDto.tippingAmount())
-                .orderStatus(orderDto.status())
+                .tippingAmount(dto.tippingAmount())
+                .orderStatus(dto.status())
                 .build();
 
         orderRepository.save(updatedOrder);
@@ -110,22 +105,19 @@ public class OrderService {
 
     @Transactional
     public ReceiptDto generateReceipt(Order order) {
-        if (order.getReceipt() != null)
-            return receiptMapper.toDto(order.getReceipt());
+        if (order.getReceipt() != null) {
+            return ReceiptMapper.toDto(order.getReceipt());
+        }
 
-        String template = """
-                Receipt for Order %s
-                Discount:         %s
-                """;
         Receipt receipt = Receipt.builder()
                 .order(order)
-                .text(String.format(template, order.getId(), order.getDiscountAmount()))
+                .text(receiptMapper.mapOrderToReceipt(order))
                 .build();
         order.setOrderStatus(OrderStatus.COMPLETED); // should have separate method for completing the order
         orderRepository.save(order);
         receiptRepository.save(receipt);
 
-        return receiptMapper.toDto(receipt);
+        return ReceiptMapper.toDto(receipt);
     }
 
     public void cancelOrder(UUID orderId) {
@@ -136,7 +128,9 @@ public class OrderService {
     }
 
     public ReceiptDto generateReceipt(UUID orderId) {
-        return generateReceipt(findOrder(orderId));
+        Order order = orderRepository.findOrderWithProductsAndServicesAndDiscountsById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+        return generateReceipt(order);
     }
 
     private void attachProducts(Order order, List<OrderProductDto> productDtos) {
@@ -154,5 +148,11 @@ public class OrderService {
         orderProduct.setProduct(product);
         orderProduct.setCount(count);
         return orderProduct;
+    }
+
+    private List<ProvidedService> getServices(Order order) {
+        return order.getReservations().stream()
+                .map(it -> it.getServiceSlot().getProvidedService())
+                .toList();
     }
 }
