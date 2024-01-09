@@ -24,5 +24,6 @@ public class ProductRequest {
     private Integer stock;
 
     private UUID discountId;
+    private UUID loyaltyProgramId;
 
 }

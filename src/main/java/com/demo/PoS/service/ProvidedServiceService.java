@@ -5,8 +5,10 @@ import com.demo.PoS.dto.providedService.ProvidedServiceResponse;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.mappers.ProvidedServiceMapper;
 import com.demo.PoS.model.entity.Discount;
+import com.demo.PoS.model.entity.LoyaltyProgram;
 import com.demo.PoS.model.entity.ProvidedService;
 import com.demo.PoS.repository.DiscountRepository;
+import com.demo.PoS.repository.LoyaltyProgramRepository;
 import com.demo.PoS.repository.ProvidedServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ public class ProvidedServiceService {
     private final ProvidedServiceRepository providedServiceRepository;
 
     private final DiscountRepository discountRepository;
+
+    private final LoyaltyProgramRepository loyaltyProgramRepository;
 
     public List<ProvidedServiceResponse> getAllProvidedServices() {
         List<ProvidedService> providedServices = providedServiceRepository.findAll();
@@ -52,6 +56,7 @@ public class ProvidedServiceService {
                 .description(providedService.getDescription())
                 .price(providedService.getPrice())
                 .discountId(Optional.ofNullable(providedService.getDiscount()).map(Discount::getId).orElse(null))
+                .loyaltyProgramId(Optional.ofNullable(providedService.getLoyaltyProgram()).map(LoyaltyProgram::getId).orElse(null))
                 .build();
     }
 
@@ -69,6 +74,13 @@ public class ProvidedServiceService {
                     Discount discount = discountRepository.findById(discountId)
                             .orElseThrow(() -> new NotFoundException("Discount not found with id: " + discountId));
                     providedService.setDiscount(discount);
+                }, () -> providedService.setDiscount(null));
+
+        Optional.ofNullable(providedServiceRequest.getLoyaltyProgramId())
+                .ifPresentOrElse(loyaltyProgramId -> {
+                    LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.findById(loyaltyProgramId)
+                            .orElseThrow(() -> new NotFoundException("Loyalty program not found with id: " + loyaltyProgramId));
+                    providedService.setLoyaltyProgram(loyaltyProgram);
                 }, () -> providedService.setDiscount(null));
 
         providedServiceRepository.save(providedService);

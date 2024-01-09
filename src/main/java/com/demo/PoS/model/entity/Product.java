@@ -1,6 +1,8 @@
 package com.demo.PoS.model.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +22,10 @@ public class Product extends Item {
 
     @ManyToOne
     private Discount discount;
+
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "loyalty_program_id")
+    private LoyaltyProgram loyaltyProgram;
 
 }
 
