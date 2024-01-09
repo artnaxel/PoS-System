@@ -1,47 +1,61 @@
 <h1>Receipt</h1>
 <span>Order: <span th:text="${order.id}"></span></span>
-<h2>Ordered Products</h2>
-<table>
-    <tr>
-        <th>Product</th>
-        <th>Amount</th>
-        <th>Unit Price (EUR)</th>
-        <th>Discount (EUR)</th>
-        <th>Total Price (EUR)</th>
-    </tr>
-    <tr
-            th:each="product : ${order.products}"
-    >
-        <td th:text="${product.name}"></td>
-        <td th:text="${product.count}"></td>
-        <td th:text="${product.price}"></td>
-        <td th:text="${product.discount} ?: '-'"></td>
-        <td th:text="${product.totalPrice}"></td>
-    </tr>
-</table>
-<br />
-<h2>Ordered Services</h2>
-<table>
-    <tr>
-        <th>Service</th>
-        <th>Start Time</th>
-        <th>End Time</th>
-        <th>Price (EUR)</th>
-        <th>Discount (EUR)</th>
-        <th>Total Price (EUR)</th>
-    </tr>
-    <tr
-            th:each="service : ${order.services}"
-    >
-        <td th:text="${service.name}"></td>
-        <td th:text="${service.startTime}"></td>
-        <td th:text="${service.endTime}"></td>
-        <td th:text="${service.price}"></td>
-        <td th:text="${service.discount} ?: '-'"></td>
-        <td th:text="${service.totalPrice}"></td>
-    </tr>
-</table>
-<br />
+<div th:if="${not #lists.isEmpty(order.products)}">
+    <h2>Ordered Products</h2>
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Amount</th>
+            <th>Unit Price (EUR)</th>
+            <th>Discount (EUR)</th>
+            <th>Total Price (EUR)</th>
+        </tr>
+        <tr th:each="product : ${order.products}">
+            <td th:text="${product.name}"></td>
+            <td th:text="${product.count}"></td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.discount} ?: '-'"></td>
+            <td th:text="${product.totalPrice}"></td>
+        </tr>
+    </table>
+</div>
+<div th:if="${not #lists.isEmpty(order.services)}">
+    <br/>
+    <h2>Ordered Services</h2>
+    <table>
+        <tr>
+            <th>Service</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Price (EUR)</th>
+            <th>Discount (EUR)</th>
+            <th>Total Price (EUR)</th>
+        </tr>
+        <tr th:each="service : ${order.services}">
+            <td th:text="${service.name}"></td>
+            <td th:text="${service.startTime}"></td>
+            <td th:text="${service.endTime}"></td>
+            <td th:text="${service.price}"></td>
+            <td th:text="${service.discount} ?: '-'"></td>
+            <td th:text="${service.totalPrice}"></td>
+        </tr>
+    </table>
+</div>
+<div th:if="${not #lists.isEmpty(order.loyaltyDiscounts)}">
+    <br/>
+    <h2>Loyalty Program Discounts</h2>
+    <h3 th:text="${order.loyaltyDiscounts[0].programName}"></h3>
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Discount (EUR)</th>
+        </tr>
+        <tr th:each="discount : ${order.loyaltyDiscounts}">
+            <td th:text="${discount.productName}"></td>
+            <td th:text="${discount.amount}"></td>
+        </tr>
+    </table>
+</div>
 Order Discount: <span th:text="${order.discount} ?: '0'"></span> EUR<br/>
 Tax: <span th:text="${order.taxRate}"></span>%<br/>
 Tip: <span th:text="${order.tip} ?: '0'"></span> EUR<br/>
