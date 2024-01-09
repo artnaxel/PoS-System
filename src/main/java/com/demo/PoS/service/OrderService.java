@@ -32,7 +32,6 @@ public class OrderService {
     private final OrderProductRepository orderProductRepository;
     private final ReceiptMapper receiptMapper;
 
-    @Transactional
     public List<Order> findAllOrders() {
         return orderRepository.findAll();
     }
@@ -43,7 +42,9 @@ public class OrderService {
     }
 
     public List<OrderDto> getAllOrders() {
-        return findAllOrders().stream().map(OrderMapper::toDto).toList();
+        return findAllOrders().stream()
+                .map(OrderMapper::toDto)
+                .toList();
     }
 
     public OrderDto getOrder(UUID id) {
@@ -127,6 +128,7 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    @Transactional
     public ReceiptDto generateReceipt(UUID orderId) {
         Order order = orderRepository.findOrderWithProductsAndServicesAndDiscountsById(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found"));
@@ -149,5 +151,5 @@ public class OrderService {
         orderProduct.setCount(count);
         return orderProduct;
     }
-
+    
 }
