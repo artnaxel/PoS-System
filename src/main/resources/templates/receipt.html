@@ -4,10 +4,10 @@
 <table>
     <tr>
         <th>Product</th>
-        <th>Count</th>
-        <th>Unit Price</th>
-        <th>Discount</th>
-        <th>Total Price</th>
+        <th>Amount</th>
+        <th>Unit Price (EUR)</th>
+        <th>Discount (EUR)</th>
+        <th>Total Price (EUR)</th>
     </tr>
     <tr
             th:each="product : ${order.products}"
@@ -26,9 +26,9 @@
         <th>Service</th>
         <th>Start Time</th>
         <th>End Time</th>
-        <th>Price</th>
-        <th>Discount</th>
-        <th>Total Price</th>
+        <th>Price (EUR)</th>
+        <th>Discount (EUR)</th>
+        <th>Total Price (EUR)</th>
     </tr>
     <tr
             th:each="service : ${order.services}"
@@ -41,3 +41,9 @@
         <td th:text="${service.totalPrice}"></td>
     </tr>
 </table>
+<br />
+Order Discount: <span th:text="${order.discount} ?: '0'"></span> EUR<br/>
+Tax: <span th:text="${order.taxRate}"></span>%<br/>
+Tip: <span th:text="${order.tip} ?: '0'"></span> EUR<br/>
+-----------------------------------------------------------------------------------<br/>
+Total: <span th:text="${order.totalPrice}"></span> EUR
