@@ -1,8 +1,6 @@
 package com.demo.PoS.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,4 +22,8 @@ public class ProvidedService extends Item {
     
     @ManyToOne
     private Discount discount;
+
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "loyalty_program_id")
+    private LoyaltyProgram loyaltyProgram;
 }
