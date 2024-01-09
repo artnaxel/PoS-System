@@ -15,5 +15,6 @@ public class ProductResponse {
     private BigDecimal price;
     private Integer stock;
     private UUID discountId;
+    private UUID loyaltyProgramId;
 
 }
