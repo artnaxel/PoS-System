@@ -2,6 +2,7 @@ package com.demo.PoS.controller;
 
 import com.demo.PoS.dto.loyaltyProgram.LoyaltyProgramRequest;
 import com.demo.PoS.dto.loyaltyProgram.LoyaltyProgramResponse;
+import com.demo.PoS.service.CustomerService;
 import com.demo.PoS.service.LoyaltyProgramService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,12 @@ import java.util.UUID;
 @RequestMapping("/loyaltyPrograms")
 public class LoyaltyProgramController {
     private final LoyaltyProgramService loyaltyProgramService;
+    private final CustomerService customerService;
 
 
-    public LoyaltyProgramController(LoyaltyProgramService loyaltyProgramService) {
+    public LoyaltyProgramController(LoyaltyProgramService loyaltyProgramService, CustomerService customerService) {
         this.loyaltyProgramService = loyaltyProgramService;
+        this.customerService = customerService;
     }
 
     @PostMapping
@@ -53,5 +56,18 @@ public class LoyaltyProgramController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{loyaltyProgramId}/{customerId}")
+    public ResponseEntity<Void> assignLoyaltyProgram(
+            @PathVariable UUID customerId,
+            @PathVariable UUID loyaltyProgramId) {
+        customerService.assignLoyaltyProgram(customerId, loyaltyProgramId);
+
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/{customerId}/removeLoyaltyProgram")
+    public ResponseEntity<Void> removeLoyaltyProgram(@PathVariable UUID customerId) {
+        customerService.removeLoyaltyProgram(customerId);
+        return ResponseEntity.ok().build();
+    }
 
 }

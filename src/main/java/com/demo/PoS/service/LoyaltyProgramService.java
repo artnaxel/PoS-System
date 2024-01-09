@@ -4,7 +4,9 @@ import com.demo.PoS.dto.loyaltyProgram.LoyaltyProgramRequest;
 import com.demo.PoS.dto.loyaltyProgram.LoyaltyProgramResponse;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.mappers.LoyaltyProgramMapper;
+import com.demo.PoS.model.entity.Customer;
 import com.demo.PoS.model.entity.LoyaltyProgram;
+import com.demo.PoS.repository.CustomerRepository;
 import com.demo.PoS.repository.LoyaltyProgramRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 public class LoyaltyProgramService {
 
     private final LoyaltyProgramRepository loyaltyProgramRepository;
+    private final CustomerRepository customerRepository;
+
 
     public LoyaltyProgramResponse createLoyaltyProgram(LoyaltyProgramRequest loyaltyProgramRequest) {
         LoyaltyProgram loyaltyProgram = LoyaltyProgram.builder()
@@ -47,7 +51,7 @@ public class LoyaltyProgramService {
 
     public LoyaltyProgramResponse updateLoyaltyProgram(UUID id, LoyaltyProgramRequest loyaltyProgramRequest) {
         LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Discount not found"));
+                .orElseThrow(() -> new NotFoundException("Loyalty Program not found"));
 
         loyaltyProgram.setName(loyaltyProgramRequest.getName());
         loyaltyProgram.setDiscountRate(loyaltyProgramRequest.getDiscountRate());
@@ -57,6 +61,18 @@ public class LoyaltyProgramService {
         return LoyaltyProgramMapper.toLoyaltyProgramResponse(loyaltyProgram);
     }
 
-    public void deleteLoyaltyProgram(UUID id) { loyaltyProgramRepository.deleteById(id); }
+    public void deleteLoyaltyProgram(UUID loyaltyProgramId) {
+        LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.findById(loyaltyProgramId)
+                .orElseThrow(() -> new NotFoundException("Loyalty Program not found"));
 
+        // Disassociate the loyalty program from all customers
+        List<Customer> customersWithLoyaltyProgram = customerRepository.findByLoyaltyProgram(loyaltyProgram);
+        for (Customer customer : customersWithLoyaltyProgram) {
+            customer.setLoyaltyProgram(null);
+            customerRepository.save(customer);
+        }
+
+        loyaltyProgramRepository.delete(loyaltyProgram);
+    }
 }
+
