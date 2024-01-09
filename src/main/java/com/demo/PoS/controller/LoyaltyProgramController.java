@@ -5,6 +5,8 @@ import com.demo.PoS.dto.loyaltyProgram.LoyaltyProgramResponse;
 import com.demo.PoS.service.CustomerService;
 import com.demo.PoS.service.LoyaltyProgramService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,18 +15,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/loyaltyPrograms")
 public class LoyaltyProgramController {
     private final LoyaltyProgramService loyaltyProgramService;
     private final CustomerService customerService;
-
-
-    public LoyaltyProgramController(LoyaltyProgramService loyaltyProgramService, CustomerService customerService) {
-        this.loyaltyProgramService = loyaltyProgramService;
-        this.customerService = customerService;
-    }
 
     @PostMapping
     public ResponseEntity<LoyaltyProgramResponse> createLoyaltyProgram(@RequestBody @Valid LoyaltyProgramRequest loyaltyProgram) {
