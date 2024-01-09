@@ -46,6 +46,12 @@ public class ServiceSlotService {
         return ServiceSlotMapper.toServiceSlotResponse(serviceSlot);
     }
 
+    public List<ServiceSlotResponse> getAllServiceSlots() {
+        return serviceSlotRepository.findAll().stream()
+                .map(ServiceSlotMapper::toServiceSlotResponse)
+                .collect(Collectors.toList());
+    }
+
     public List<ServiceSlot> findAvailableSlotsByService(UUID serviceId) {
         ProvidedService service = providedServiceRepository.findById(serviceId)
                 .orElseThrow(() -> new NotFoundException("Service not found with id: " + serviceId));
