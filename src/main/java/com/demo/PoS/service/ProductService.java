@@ -84,7 +84,7 @@ public class ProductService {
                     LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.findById(loyaltyProgramId)
                             .orElseThrow(() -> new NotFoundException("Loyalty Program not found with id: " + loyaltyProgramId));
                     product.setLoyaltyProgram(loyaltyProgram);
-                }, () -> product.setDiscount(null));
+                }, () -> product.setLoyaltyProgram(null));
 
         productRepository.save(product);
 
