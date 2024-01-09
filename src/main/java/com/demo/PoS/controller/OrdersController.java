@@ -1,8 +1,8 @@
 package com.demo.PoS.controller;
 
-import com.demo.PoS.dto.OrderDiscountDto;
-import com.demo.PoS.dto.OrderDto;
-import com.demo.PoS.dto.ReceiptDto;
+import com.demo.PoS.dto.order.OrderDiscountDto;
+import com.demo.PoS.dto.order.OrderDto;
+import com.demo.PoS.dto.receipt.ReceiptDto;
 import com.demo.PoS.model.entity.Order;
 import com.demo.PoS.service.OrderService;
 import jakarta.validation.Valid;

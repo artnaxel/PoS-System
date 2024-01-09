@@ -1,9 +1,9 @@
 package com.demo.PoS.service;
 
-import com.demo.PoS.dto.OrderDiscountDto;
-import com.demo.PoS.dto.OrderDto;
-import com.demo.PoS.dto.OrderProductDto;
-import com.demo.PoS.dto.ReceiptDto;
+import com.demo.PoS.dto.order.OrderDiscountDto;
+import com.demo.PoS.dto.order.OrderDto;
+import com.demo.PoS.dto.order.OrderProductDto;
+import com.demo.PoS.dto.receipt.ReceiptDto;
 import com.demo.PoS.exceptions.NotFoundException;
 import com.demo.PoS.mappers.OrderMapper;
 import com.demo.PoS.mappers.ReceiptMapper;
@@ -55,7 +55,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(OrderDto dto) {
+    public Order createOrder(OrderDto orderDto) {
         Customer customer = customerRepository.findById(dto.customerId())
                 .orElseThrow(() -> new NotFoundException("Customer not found"));
         Order order = Order.builder()
@@ -63,13 +63,13 @@ public class OrderService {
                 .customer(customer)
                 .build();
         Order createdOrder = orderRepository.save(order);
-        attachProducts(order, dto.orderProducts());
+        attachProducts(order, orderDto.orderProducts());
         return createdOrder;
     }
 
     @Transactional
-    public void editOrder(UUID id, OrderDto dto) {
-        if (!id.equals(dto.id())) {
+    public void editOrder(UUID id, OrderDto orderDto) {
+        if (!id.equals(orderDto.id())) {
             throw new IllegalArgumentException("Cannot change the ID of an order");
         }
 
@@ -79,7 +79,8 @@ public class OrderService {
                 .findById(dto.customerId())
                 .orElseThrow(() -> new NotFoundException("Customer not found"));
 
-        for (OrderProductDto updatedProduct : Optional.ofNullable(dto.orderProducts()).orElse(Collections.emptyList())) {
+        for (OrderProductDto updatedProduct : Optional.ofNullable(orderDto.orderProducts())
+                .orElse(Collections.emptyList())) {
             Optional<OrderProduct> orderProduct = order.getOrderProducts().stream()
                     .filter(it -> it.getId().getProductId().equals(updatedProduct.productId()))
                     .findFirst();
@@ -120,7 +121,8 @@ public class OrderService {
     }
 
     public void cancelOrder(UUID orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException("Order not found"));
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found"));
         order.setOrderStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }

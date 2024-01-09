@@ -1,6 +1,7 @@
 package com.demo.PoS.mappers;
 
-import com.demo.PoS.dto.ReceiptDto;
+import com.demo.PoS.dto.receipt.ReceiptDto;
+import com.demo.PoS.model.entity.Receipt;
 import com.demo.PoS.model.entity.*;
 import com.demo.PoS.model.enums.DiscountType;
 import com.demo.PoS.model.relationship.OrderProduct;
@@ -11,7 +12,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;

@@ -1,7 +1,5 @@
 package com.demo.PoS.model.entity;
 
-import com.demo.PoS.dto.OrderDiscountDto;
-import com.demo.PoS.dto.OrderDto;
 import com.demo.PoS.model.enums.DiscountType;
 import com.demo.PoS.model.enums.OrderStatus;
 import com.demo.PoS.model.relationship.OrderProduct;

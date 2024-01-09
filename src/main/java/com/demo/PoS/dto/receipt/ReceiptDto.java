@@ -1,4 +1,4 @@
-package com.demo.PoS.dto;
+package com.demo.PoS.dto.receipt;
 
 import lombok.Builder;
 
