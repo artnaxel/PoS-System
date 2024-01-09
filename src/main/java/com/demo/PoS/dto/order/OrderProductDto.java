@@ -6,7 +6,7 @@ import java.util.UUID;
 public record OrderProductDto(
    UUID productId,
 
-   BigDecimal discountRate,
-   
+   UUID discountId,
+
    Integer count
 ) {}

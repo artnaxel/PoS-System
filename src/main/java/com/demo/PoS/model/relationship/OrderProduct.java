@@ -38,7 +38,7 @@ public class OrderProduct {
     public OrderProductDto toDto() {
         return new OrderProductDto(
                 this.product.getId(),
-                this.product.getDiscount() != null ? this.product.getDiscount().getDiscountRate() : null,
+                this.product.getDiscount() != null ? this.product.getDiscount().getId() : null,
                 this.count
         );
     }
