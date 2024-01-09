@@ -8,6 +8,7 @@ public class OrderProductMapper {
         return new OrderProductDto(
                 orderProduct.getProduct().getId(),
                 orderProduct.getProduct().getDiscount() != null ? orderProduct.getProduct().getDiscount().getId() : null,
+                orderProduct.getProduct().getLoyaltyProgram() != null ? orderProduct.getProduct().getLoyaltyProgram().getId() : null,
                 orderProduct.getCount()
         );
     }
