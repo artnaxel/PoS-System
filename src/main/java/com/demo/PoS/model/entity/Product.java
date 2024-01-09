@@ -21,5 +21,8 @@ public class Product extends Item {
     @ManyToOne
     private Discount discount;
 
+    @ManyToOne
+    private LoyaltyProgram loyaltyProgram;
+
 }
 

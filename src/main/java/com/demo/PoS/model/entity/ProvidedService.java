@@ -24,4 +24,7 @@ public class ProvidedService extends Item {
 
     @ManyToOne
     private Discount discount;
+
+    @ManyToOne
+    private LoyaltyProgram loyaltyProgram;
 }
