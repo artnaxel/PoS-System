@@ -1,11 +1,11 @@
 package com.demo.PoS.mappers;
 
 import com.demo.PoS.dto.receipt.ReceiptDto;
-import com.demo.PoS.model.entity.Receipt;
 import com.demo.PoS.model.entity.*;
 import com.demo.PoS.model.enums.DiscountType;
 import com.demo.PoS.model.relationship.OrderProduct;
 import com.demo.PoS.service.LoyaltyProgramService;
+import com.demo.PoS.service.PaymentService;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
@@ -16,13 +16,17 @@ import org.thymeleaf.context.Context;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class ReceiptMapper {
     private final TemplateEngine templateEngine;
     private final LoyaltyProgramService loyaltyProgramService;
+    private final PaymentService paymentService;
 
     public static ReceiptDto toDto(Receipt receipt) {
         return ReceiptDto.builder()
@@ -37,6 +41,7 @@ public class ReceiptMapper {
         List<ProductTemplate> productList = new ArrayList<>();
         List<ServiceTemplate> serviceList = new ArrayList<>();
         List<LoyaltyDiscountTemplate> loyaltyDiscountList = new ArrayList<>();
+        List<PaymentTemplate> paymentList = new ArrayList<>();
 
         for (OrderProduct orderProduct : order.getOrderProducts()) {
             BigDecimal price = orderProduct.getProduct().getPrice();
@@ -115,15 +120,32 @@ public class ReceiptMapper {
                 .add(Optional.ofNullable(order.getTippingAmount())
                         .orElse(BigDecimal.ZERO));
 
+        for (Payment payment : paymentService.findPaymentsByOrder(order.getId())) {
+            paymentList.add(
+                    PaymentTemplate.builder()
+                            .method(payment.getPaymentMethod().name())
+                            .amount(payment.getAmount())
+                            .build()
+            );
+        }
+
+        BigDecimal balance = totalOrderPrice.subtract(
+                paymentList.stream()
+                        .map(PaymentTemplate::amount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+        );
+
         context.setVariable("order", OrderTemplate.builder()
                 .id(order.getId())
                 .products(productList)
                 .services(serviceList)
                 .loyaltyDiscounts(loyaltyDiscountList)
+                .payments(paymentList)
                 .taxRate(BigDecimal.valueOf(21L))
                 .discount(order.getDiscountAmount())
                 .tip(order.getTippingAmount())
                 .totalPrice(totalOrderPrice.setScale(2, RoundingMode.HALF_UP))
+                .balance(balance.setScale(2, RoundingMode.HALF_UP))
                 .build());
 
         return templateEngine.process("receipt.html", context);
@@ -159,15 +181,24 @@ public class ReceiptMapper {
     }
 
     @Builder
+    private record PaymentTemplate(
+            BigDecimal amount,
+            String method
+    ) {
+    }
+
+    @Builder
     private record OrderTemplate(
             UUID id,
             List<ProductTemplate> products,
             List<ServiceTemplate> services,
             List<LoyaltyDiscountTemplate> loyaltyDiscounts,
+            List<PaymentTemplate> payments,
             BigDecimal taxRate,
             BigDecimal tip,
             BigDecimal discount,
-            BigDecimal totalPrice
+            BigDecimal totalPrice,
+            BigDecimal balance
     ) {
     }
 }

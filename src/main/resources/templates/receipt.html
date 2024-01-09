@@ -61,3 +61,19 @@ Tax: <span th:text="${order.taxRate}"></span>%<br/>
 Tip: <span th:text="${order.tip} ?: '0'"></span> EUR<br/>
 -----------------------------------------------------------------------------------<br/>
 Total: <span th:text="${order.totalPrice}"></span> EUR
+
+<div th:if="${not #lists.isEmpty(order.payments)}">
+    <br/>
+    <h2>Payments</h2>
+    <table>
+        <tr>
+            <th>Amount (EUR)</th>
+            <th>Method</th>
+        </tr>
+        <tr th:each="payment : ${order.payments}">
+            <td th:text="${payment.amount}"></td>
+            <td th:text="${payment.method}"></td>
+        </tr>
+    </table>
+    Balance: <span th:text="${order.balance}"></span> EUR
+</div>

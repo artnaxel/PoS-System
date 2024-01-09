@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -28,9 +26,9 @@ public class PaymentService {
     public PaymentResponse createPayment(PaymentRequest paymentRequest) {
         Order order = orderRepository.findById(paymentRequest.getOrderId())
                 .orElseThrow(() -> new NotFoundException("Payment not found with: " + paymentRequest.getOrderId()));
-        Optional<Payment> existingPayment = paymentRepository.findByOrderId(paymentRequest.getOrderId());
+        Set<Payment> existingPayment = paymentRepository.findByOrderId(paymentRequest.getOrderId());
 
-        if (existingPayment.isPresent()) {
+        if (!existingPayment.isEmpty()) {
             throw new IllegalStateException("Payment already exists for order ID: " + paymentRequest.getOrderId());
         }
 
@@ -77,4 +75,9 @@ public class PaymentService {
 
         return PaymentMapper.toPaymentResponse(updatedPayment);
     }
+
+    public Set<Payment> findPaymentsByOrder(UUID orderId) {
+        return paymentRepository.findByOrderId(orderId);
+    }
+
 }
