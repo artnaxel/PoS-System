@@ -22,6 +22,6 @@ public class ProvidedServiceRequest {
     private BigDecimal price;
 
     private UUID discountId;
-    private UUID loyaltyDiscountId;
+    private UUID loyaltyProgramId;
 
 }

@@ -15,6 +15,6 @@ public class ProvidedServiceResponse {
     private String description;
     private BigDecimal price;
     private UUID discountId;
-    private UUID loyaltyDiscountId;
+    private UUID loyaltyProgramId;
 }
 

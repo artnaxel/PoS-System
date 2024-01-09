@@ -56,7 +56,7 @@ public class ProvidedServiceService {
                 .description(providedService.getDescription())
                 .price(providedService.getPrice())
                 .discountId(Optional.ofNullable(providedService.getDiscount()).map(Discount::getId).orElse(null))
-                .loyaltyDiscountId(Optional.ofNullable(providedService.getLoyaltyProgram()).map(LoyaltyProgram::getId).orElse(null))
+                .loyaltyProgramId(Optional.ofNullable(providedService.getLoyaltyProgram()).map(LoyaltyProgram::getId).orElse(null))
                 .build();
     }
 
@@ -76,10 +76,10 @@ public class ProvidedServiceService {
                     providedService.setDiscount(discount);
                 }, () -> providedService.setDiscount(null));
 
-        Optional.ofNullable(providedServiceRequest.getLoyaltyDiscountId())
-                .ifPresentOrElse(loyaltyDiscountId -> {
-                    LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.findById(loyaltyDiscountId)
-                            .orElseThrow(() -> new NotFoundException("Loyalty program not found with id: " + loyaltyDiscountId));
+        Optional.ofNullable(providedServiceRequest.getLoyaltyProgramId())
+                .ifPresentOrElse(loyaltyProgramId -> {
+                    LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.findById(loyaltyProgramId)
+                            .orElseThrow(() -> new NotFoundException("Loyalty program not found with id: " + loyaltyProgramId));
                     providedService.setLoyaltyProgram(loyaltyProgram);
                 }, () -> providedService.setDiscount(null));
 
