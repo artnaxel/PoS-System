@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -25,8 +26,14 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponse createPayment(PaymentRequest paymentRequest) {
+        Order order = orderRepository.findById(paymentRequest.getOrderId())
+                .orElseThrow(() -> new NotFoundException("Payment not found with: " + paymentRequest.getOrderId()));
+        Optional<Payment> existingPayment = paymentRepository.findByOrderId(paymentRequest.getOrderId());
 
-        Order order = orderRepository.findById(paymentRequest.getOrderId()).orElseThrow();
+        if (existingPayment.isPresent()) {
+            throw new IllegalStateException("Payment already exists for order ID: " + paymentRequest.getOrderId());
+        }
+
         Payment payment = Payment.builder()
                 .order(order)
                 .amount(paymentRequest.getAmount())
@@ -56,15 +63,15 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentResponse updatePayment(UUID paymentId, PaymentRequest paymentDetails) {
+    public PaymentResponse updatePayment(UUID paymentId, PaymentRequest paymentRequest) {
         Payment updatedPayment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + paymentId));
 
-        updatedPayment.setAmount(paymentDetails.getAmount());
-        updatedPayment.setPaymentMethod(paymentDetails.getPaymentMethod());
-        updatedPayment.setPaymentStatus(paymentDetails.getPaymentStatus());
-        updatedPayment.setRefundAmount(paymentDetails.getRefundAmount());
-        updatedPayment.setRefundDate(paymentDetails.getRefundDate());
+        updatedPayment.setAmount(paymentRequest.getAmount());
+        updatedPayment.setPaymentMethod(paymentRequest.getPaymentMethod());
+        updatedPayment.setPaymentStatus(paymentRequest.getPaymentStatus());
+        updatedPayment.setRefundAmount(paymentRequest.getRefundAmount());
+        updatedPayment.setRefundDate(paymentRequest.getRefundDate());
 
         paymentRepository.save(updatedPayment);
 
