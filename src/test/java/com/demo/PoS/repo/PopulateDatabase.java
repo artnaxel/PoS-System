@@ -18,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -45,6 +44,8 @@ public class PopulateDatabase {
     private ProvidedServiceRepository providedServiceRepository;
     @Autowired
     private ServiceSlotRepository serviceSlotRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     private final Faker faker = new Faker();
 
@@ -58,6 +59,7 @@ public class PopulateDatabase {
     void cleanDb() {
         reservationRepository.deleteAll();
         receiptRepository.deleteAll();
+        paymentRepository.deleteAll();
         orderProductRepository.deleteAll();
         reservationRepository.deleteAll();
         serviceSlotRepository.deleteAll();
@@ -166,7 +168,7 @@ public class PopulateDatabase {
     @Test
     @org.junit.jupiter.api.Order(60)
     void populateSlots() {
-        ServiceSlot slot = ServiceSlot.builder()
+        ServiceSlot slot1 = ServiceSlot.builder()
                 .serviceSlotStatus(ServiceSlotStatus.FREE)
                 .startTime(LocalDateTime.now().withDayOfMonth(20).withHour(14).truncatedTo(ChronoUnit.HOURS))
                 .endTime(LocalDateTime.now().withDayOfMonth(20).withHour(16).truncatedTo(ChronoUnit.HOURS))
@@ -174,7 +176,16 @@ public class PopulateDatabase {
                 .employee(employeeRepository.findAll().getFirst())
                 .build();
 
-        serviceSlotRepository.save(slot);
+        ServiceSlot slot2 = ServiceSlot.builder()
+                .serviceSlotStatus(ServiceSlotStatus.FREE)
+                .startTime(LocalDateTime.now().withDayOfMonth(19).withHour(14).truncatedTo(ChronoUnit.HOURS))
+                .endTime(LocalDateTime.now().withDayOfMonth(19).withHour(16).truncatedTo(ChronoUnit.HOURS))
+                .providedService(providedServiceRepository.findAll().getFirst())
+                .employee(employeeRepository.findAll().getFirst())
+                .build();
+
+        serviceSlotRepository.save(slot1);
+        serviceSlotRepository.save(slot2);
     }
     @Test
     @org.junit.jupiter.api.Order(70)
@@ -185,6 +196,8 @@ public class PopulateDatabase {
                 .order(order)
                 .serviceSlot(slot)
                 .build();
+        slot.setServiceSlotStatus(ServiceSlotStatus.RESERVED);
+        serviceSlotRepository.save(slot);
         reservationRepository.save(reservation);
     }
 }
