@@ -35,14 +35,6 @@ public class OrderProduct {
 
     private Integer count = 1;
 
-    public OrderProductDto toDto() {
-        return new OrderProductDto(
-                this.product.getId(),
-                this.product.getDiscount() != null ? this.product.getDiscount().getId() : null,
-                this.count
-        );
-    }
-
     @Embeddable
     @Data
     @AllArgsConstructor

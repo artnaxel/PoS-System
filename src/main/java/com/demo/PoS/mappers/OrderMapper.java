@@ -10,7 +10,7 @@ public class OrderMapper {
         return OrderDto.builder()
                 .id(order.getId())
                 .customerId(order.getCustomer().getId())
-                .orderProducts(order.getOrderProducts().stream().map(OrderProduct::toDto).toList())
+                .orderProducts(order.getOrderProducts().stream().map(OrderProductMapper::toDto).toList())
                 .services(order.getReservations().stream()
                         .map(it -> ProvidedServiceMapper.toProvidedServiceResponse(
                                 it.getServiceSlot().getProvidedService()))
