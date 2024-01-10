@@ -26,11 +26,6 @@ public class PaymentService {
     public PaymentResponse createPayment(PaymentRequest paymentRequest) {
         Order order = orderRepository.findById(paymentRequest.getOrderId())
                 .orElseThrow(() -> new NotFoundException("Payment not found with: " + paymentRequest.getOrderId()));
-        Set<Payment> existingPayment = paymentRepository.findByOrderId(paymentRequest.getOrderId());
-
-        if (!existingPayment.isEmpty()) {
-            throw new IllegalStateException("Payment already exists for order ID: " + paymentRequest.getOrderId());
-        }
 
         Payment payment = Payment.builder()
                 .order(order)
