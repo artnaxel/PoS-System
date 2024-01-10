@@ -8,14 +8,18 @@ import com.demo.PoS.model.entity.Customer;
 import com.demo.PoS.model.entity.LoyaltyProgram;
 import com.demo.PoS.model.entity.Product;
 import com.demo.PoS.model.entity.ProvidedService;
+import com.demo.PoS.model.relationship.OrderProduct;
 import com.demo.PoS.repository.CustomerRepository;
 import com.demo.PoS.repository.LoyaltyProgramRepository;
 import com.demo.PoS.repository.ProductRepository;
 import com.demo.PoS.repository.ProvidedServiceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -92,5 +96,11 @@ public class LoyaltyProgramService {
 
         loyaltyProgramRepository.delete(loyaltyProgram);
     }
+
+    public Set<Pair<OrderProduct, LoyaltyProgram>> getLoyaltyProgramsAndProductsByOrder(UUID orderId) {
+        return loyaltyProgramRepository.findLoyaltyProgramsWithOrderProductByOrder(orderId)
+                .orElse(Collections.emptySet());
+    }
+
 }
 
